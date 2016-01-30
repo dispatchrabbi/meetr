@@ -17,7 +17,7 @@ const routes = {
           res.status(201).send(createdSchedule);
         })
         .catch(function sendErrorBack(err) {
-          console.error(err);
+          req.logger.error({ err }, 'There was an error creating the schedule.');
           res.status(500).send('There was an error creating the schedule.');
         });
     },
@@ -33,7 +33,7 @@ const routes = {
           }
         })
         .catch(function sendErrorBack(err) {
-          console.error(err);
+          req.logger.error({ err }, 'There was an error finding the schedule.');
           res.status(500).send('There was an error finding the schedule.');
         });
     },
