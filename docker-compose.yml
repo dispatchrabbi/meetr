@@ -1,0 +1,17 @@
+# This app
+meetr:
+  build: .
+  ports:
+    - "8080:8080"
+  volumes:
+    - ".:/srv/meetr"
+  links:
+    - mongo
+
+# We also need Mongo for this app
+mongo:
+  image: mongo
+  expose:
+    - "27017"
+  ports:
+    - "27018:27017"
