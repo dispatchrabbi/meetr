@@ -8,6 +8,7 @@ const scheduleHelpers = require('./schedule-helpers.js');
 
 const routes = {
   '/schedules': {
+
     post: function post(req, res) {
       if (!scheduleHelpers.isIncomingDataValid(req.body)) {
         res.status(400).send('Invalid schedule data.');
@@ -22,8 +23,11 @@ const routes = {
           res.status(500).send('There was an error creating the schedule.');
         });
     },
+
   },
+
   '/schedules/:slug': {
+
     get: function get(req, res) {
       scheduleHelpers.findBySlug(req.params.slug)
         .then(function sendScheduleBack(foundSchedule) {
@@ -43,6 +47,7 @@ const routes = {
           }
         });
     },
+
     patch: function patch(req, res) {
       // find the Schedule to modify
       scheduleHelpers.findBySlug(req.params.slug)
@@ -76,6 +81,7 @@ const routes = {
           }
         });
     },
+
     delete: function del(req, res) {
       // Find the Schedule to remove
       scheduleHelpers.findBySlug(req.params.slug)
@@ -100,25 +106,35 @@ const routes = {
           }
         });
     },
+
   },
+
   '/schedules/:slug/participants': {
+
     get: function get(req, res) {
       res.status(501).send('Not yet implemented.');
     },
+
     post: function post(req, res) {
       res.status(501).send('Not yet implemented.');
     },
+
   },
+
   '/schedules/:slug/participants/:pId': {
+
     get: function get(req, res) {
       res.status(501).send('Not yet implemented.');
     },
+
     patch: function patch(req, res) {
       res.status(501).send('Not yet implemented.');
     },
+
     delete: function del(req, res) {
       res.status(501).send('Not yet implemented.');
     },
+
   },
 };
 
