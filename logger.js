@@ -10,12 +10,12 @@ const reqSerializer = function reqSerializer(req) {
 
 const logger = bunyan.createLogger({
   name: CONFIG.app.name,
-  // streams: [
-  //   {
-  //     level: 'info',
-  //     stream: process.stdout,
-  //   },
-  // ],
+  streams: [
+    {
+      level: 'debug',
+      stream: process.stdout,
+    },
+  ],
   serializers: {
     err: bunyan.stdSerializers.err,
     req: reqSerializer,
