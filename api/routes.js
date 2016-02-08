@@ -1,27 +1,44 @@
 const _ = require('lodash');
 const APIError = require('./api-error.js');
+const wrapMpromise = require('../lib/wrap-mpromise.js');
 
 const ensureApplicationJson = require('../lib/middleware/ensure-application-json.js');
 const logRoute = require('../lib/middleware/log-route.js');
 
-const scheduleHelpers = require('./schedule-helpers.js');
+const Schedule = require('../models/schedule.js');
+
+const mungeValidationErrors = function mungeValidationErrors(err) {
+  // err.errors contains the errors (c.f. http://mongoosejs.com/docs/validation.html)
+  throw new APIError('Invalid schedule data: ' + _.map(err.errors, 'path').join(', '), 400);
+};
+
+const genericErrorHandler = function genericErrorHandler(defaultErrorMessage, req, res) {
+  return function sendErrorBack(err) {
+    req.logger.error({ err });
+
+    if (err instanceof APIError) {
+      res.status(err.httpStatus).send(err.message);
+    } else {
+      res.status(500).send(defaultErrorMessage);
+    }
+  };
+};
 
 const routes = {
   '/schedules': {
 
     post: function post(req, res) {
-      if (!scheduleHelpers.isIncomingDataValid(req.body)) {
-        res.status(400).send('Invalid schedule data.');
-      }
-
-      scheduleHelpers.create(req.body)
-        .then(function sendScheduleBack(createdSchedule) {
-          res.status(201).send(createdSchedule);
+      const scheduleToCreate = new Schedule(req.body);
+      scheduleToCreate.normalize();
+      wrapMpromise(scheduleToCreate.validate())
+        .catch(mungeValidationErrors)
+        .then(function saveSchedule() {
+          return wrapMpromise(scheduleToCreate.save());
         })
-        .catch(function sendErrorBack(err) {
-          req.logger.error({ err });
-          res.status(500).send('There was an error creating the schedule.');
-        });
+        .then(function sendScheduleBack(createdSchedule) {
+          res.status(201).send(createdSchedule.getExternalView());
+        })
+        .catch(genericErrorHandler('There was an error creating the schedule.'));
     },
 
   },
@@ -29,82 +46,57 @@ const routes = {
   '/schedules/:slug': {
 
     get: function get(req, res) {
-      scheduleHelpers.findBySlug(req.params.slug)
+      wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
         .then(function sendScheduleBack(foundSchedule) {
           if (!foundSchedule) {
             throw new APIError('Could not find a schedule with the slug ' + req.params.slug + '.', 404);
           }
 
-          res.status(200).send(foundSchedule);
+          res.status(200).send(foundSchedule.getExternalView());
         })
-        .catch(function sendErrorBack(err) {
-          req.logger.error({ err });
-
-          if (err instanceof APIError) {
-            res.status(err.httpStatus).send(err.message);
-          } else {
-            res.status(500).send('There was an error finding the schedule.');
-          }
-        });
+        .catch(genericErrorHandler('There was an error finding the schedule.', req, res));
     },
 
     patch: function patch(req, res) {
       // find the Schedule to modify
-      scheduleHelpers.findBySlug(req.params.slug)
-        .then(function modifyAndSave(foundSchedule) {
-          // could we find the schedule in the first place?
+      wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
+        .then(function modifyAndValidate(foundSchedule) {
           if (!foundSchedule) {
             throw new APIError('Could not find a schedule with the slug ' + req.params.slug + '.', 404);
           }
 
-          // modify the schedule and check that it's valid
-          // TODO: This could be made safer by validating/normalizing/screening req.body or using Model validators
           const modifiedSchedule = _.assign(foundSchedule, req.body);
-          if (!scheduleHelpers.isIncomingDataValid(modifiedSchedule)) {
-            throw new APIError('Invalid schedule data provided.', 400);
-          }
-
-          // then save the modified schedule
-          return scheduleHelpers.save(modifiedSchedule);
+          modifiedSchedule.normalize();
+          // validate() doesn't return the schedule, so we need to do that in a quick then here
+          // we'll also take the opportunity to munge any validation errors.
+          return wrapMpromise(modifiedSchedule.validate())
+            .then(() => modifiedSchedule, mungeValidationErrors);
+        })
+        .then(function saveSchedule(validSchedule) {
+          return wrapMpromise(validSchedule.save());
         })
         .then(function sendScheduleBack(savedSchedule) {
           // and finally send it back
-          res.status(200).send(savedSchedule);
+          res.status(200).send(savedSchedule.getExternalView());
         })
-        .catch(function sendErrorBack(err) {
-          req.logger.error({ err });
-
-          if (err instanceof APIError) {
-            res.status(err.httpStatus).send(err.message);
-          } else {
-            res.status(500).send('There was an error patching the schedule.');
-          }
-        });
+        .catch(genericErrorHandler('There was an error patching the schedule.', req, res));
     },
 
     delete: function del(req, res) {
       // Find the Schedule to remove
-      scheduleHelpers.findBySlug(req.params.slug)
-        .then(function remove(foundSchedule) {
+      wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
+        .then(function removeSchedule(foundSchedule) {
           if (!foundSchedule) {
             throw new APIError('Could not find a schedule with the slug ' + req.params.slug + '.', 404);
           }
 
-          return scheduleHelpers.remove(foundSchedule);
+          return wrapMpromise(foundSchedule.remove());
         })
         .then(function sendScheduleBack(removedSchedule) {
           // and finally send it back
-          res.status(200).send(removedSchedule);
+          res.status(200).send(removedSchedule.getExternalView());
         })
-        .catch(function sendErrorBack(err) {
-          req.logger.error({ err });
-
-          if (err instanceof APIError) {
-            res.status(err.httpStatus).send(err.message);
-          } else {
-            res.status(500).send('There was an error deleting the schedule.');
-          }
-        });
+        .catch(genericErrorHandler('There was an error deleting the schedule.', req, res));
     },
 
   },
