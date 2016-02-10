@@ -6,10 +6,11 @@ const ensureApplicationJson = require('../lib/middleware/ensure-application-json
 const logRoute = require('../lib/middleware/log-route.js');
 
 const Schedule = require('../models/schedule.js');
+const Participant = require('../models/participant.js');
 
 const mungeValidationErrors = function mungeValidationErrors(err) {
   // err.errors contains the errors (c.f. http://mongoosejs.com/docs/validation.html)
-  throw new APIError('Invalid schedule data: ' + _.map(err.errors, 'path').join(', '), 400);
+  throw new APIError('Invalid data: ' + _.map(err.errors, 'path').join(', '), 400);
 };
 
 const genericErrorHandler = function genericErrorHandler(defaultErrorMessage, req, res) {
@@ -26,7 +27,6 @@ const genericErrorHandler = function genericErrorHandler(defaultErrorMessage, re
 
 const routes = {
   '/schedules': {
-
     post: function post(req, res) {
       const scheduleToCreate = new Schedule(req.body);
       scheduleToCreate.normalize();
@@ -36,7 +36,7 @@ const routes = {
           return wrapMpromise(scheduleToCreate.save());
         })
         .then(function sendScheduleBack(createdSchedule) {
-          res.status(201).send(createdSchedule.getExternalView());
+          res.status(201).send(createdSchedule);
         })
         .catch(genericErrorHandler('There was an error creating the schedule.'));
     },
@@ -52,7 +52,7 @@ const routes = {
             throw new APIError('Could not find a schedule with the slug ' + req.params.slug + '.', 404);
           }
 
-          res.status(200).send(foundSchedule.getExternalView());
+          res.status(200).send(foundSchedule);
         })
         .catch(genericErrorHandler('There was an error finding the schedule.', req, res));
     },
@@ -77,7 +77,7 @@ const routes = {
         })
         .then(function sendScheduleBack(savedSchedule) {
           // and finally send it back
-          res.status(200).send(savedSchedule.getExternalView());
+          res.status(200).send(savedSchedule);
         })
         .catch(genericErrorHandler('There was an error patching the schedule.', req, res));
     },
@@ -94,7 +94,7 @@ const routes = {
         })
         .then(function sendScheduleBack(removedSchedule) {
           // and finally send it back
-          res.status(200).send(removedSchedule.getExternalView());
+          res.status(200).send(removedSchedule);
         })
         .catch(genericErrorHandler('There was an error deleting the schedule.', req, res));
     },
@@ -104,11 +104,67 @@ const routes = {
   '/schedules/:slug/participants': {
 
     get: function get(req, res) {
-      res.status(501).send('Not yet implemented.');
+      wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
+        .then(function findParticipants(foundSchedule) {
+          if (!foundSchedule) {
+            throw new APIError('Could not find a schedule with the slug ' + req.params.slug);
+          }
+
+          return wrapMpromise(Participant.find({ schedule: foundSchedule._id }).exec());
+        })
+        .then(function sendParticipantsBack(foundParticipants) {
+          res.status(200).send(foundParticipants.map(p => p.sanitize()));
+        })
+        .catch(genericErrorHandler('There was an error finding the participants.', req, res));
     },
 
+    // TODO: Some kind of session middleware, where here we add this user to the session and make sure we don't let
+    // other folks modify this user
     post: function post(req, res) {
-      res.status(501).send('Not yet implemented.');
+      /* eslint-disable no-var */ // We need to use a closure here, and Node doesn't like us using `let`.
+      var participantSchedule;
+      var created = false;
+      /* eslint-enable no-var */
+
+      wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
+        .then(function createParticipant(foundSchedule) {
+          if (!foundSchedule) {
+            throw new APIError('Could not find a schedule with the slug ' + req.params.slug);
+          }
+          participantSchedule = foundSchedule;
+
+          // So we need to check if there is a Participant with the name we were given.
+          // If there isn't one, we need to register it as a new participant with the password given.
+          // If there is one, we need to verify the password.
+          // Either way we need to send that Participant back (unless there's an error of some kind)
+          if (!req.body.name) {
+            throw new APIError('No name provided.', 400);
+          }
+          if (req.body.password === undefined) {
+            throw new APIError('No password provided.', 400);
+          }
+
+          return wrapMpromise(Participant.findOne({ name: req.body.name }).exec());
+        })
+        .then(function verifyOrRegisterParticipant(foundParticipant) {
+          if (!foundParticipant) {
+            created = true;
+            return Participant.register(req.body.name, req.body.password, participantSchedule);
+          }
+
+          return foundParticipant.verify(req.body.password)
+            .then(function checkVerification(verified) {
+              if (!verified) {
+                throw new APIError('Authentication failed.', 403);
+              }
+
+              return foundParticipant;
+            });
+        })
+        .then(function sendParticipantBack(registeredOrVerifiedParticipant) {
+          res.status(created ? 201 : 200).send(registeredOrVerifiedParticipant.sanitize());
+        })
+        .catch(genericErrorHandler('There was an error registering the participant.', req, res));
     },
 
   },

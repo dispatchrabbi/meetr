@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const slug = require('../lib/slug.js');
 
-const daysOfTheWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const dateRegex = /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[0-1])$/;
+const DAYS_OF_THE_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DATE_REGEX = /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[0-1])$/;
 
 const createRequiredByDefiniteValidator = function createRequiredByDefiniteValidator(valueOfDefinite, schemaType) {
   return function checkRequiredByDefinite(val) {
@@ -20,10 +20,10 @@ const Schedule = new mongoose.Schema({
   slug: { type: String, index: true, default: () => { return slug.generate(); } }, // The slug used in the URL to direct others to this schedule
 
   definite: Boolean, // Whether the scheduling is for specific dates or just days of the week
-  startDay: { type: String, enum: daysOfTheWeek, required: false, validate: checkRequiredIfIndefinite }, // The start day of the schedule (if `definite` is `false`)
-  endDay: { type: String, enum: daysOfTheWeek, required: false, validate: checkRequiredIfIndefinite }, // The end day of the schedule (if `definite` is `false`)
-  startDate: { type: String, match: dateRegex, required: false, validate: checkRequiredIfDefinite }, // The start day/date of the schedule (if `definite` is `true`)
-  endDate: { type: String, match: dateRegex, required: false, validate: checkRequiredIfDefinite }, // The end day/date of the schedule (if `definite` is `true`)
+  startDay: { type: String, enum: DAYS_OF_THE_WEEK, required: false, validate: checkRequiredIfIndefinite }, // The start day of the schedule (if `definite` is `false`)
+  endDay: { type: String, enum: DAYS_OF_THE_WEEK, required: false, validate: checkRequiredIfIndefinite }, // The end day of the schedule (if `definite` is `false`)
+  startDate: { type: String, match: DATE_REGEX, required: false, validate: checkRequiredIfDefinite }, // The start day/date of the schedule (if `definite` is `true`)
+  endDate: { type: String, match: DATE_REGEX, required: false, validate: checkRequiredIfDefinite }, // The end day/date of the schedule (if `definite` is `true`)
 
   timezone: String, // Which timezone this schedule is based in
   startTime: { type: Number, min: 0, max: 86400 }, // What time each day scheduling begins (in seconds after midnight)
@@ -38,23 +38,6 @@ Schedule.method('normalize', function normalizeSchedule() {
     this.startDate = undefined;
     this.endDate = undefined;
   }
-});
-
-Schedule.method('getExternalView', function getExternalView() {
-  return {
-    title: this.title,
-    slug: this.slug,
-
-    definite: this.definite,
-    startDay: this.startDay,
-    endDay: this.endDay,
-    startDate: this.startDate,
-    endDate: this.endDate,
-
-    timezone: this.timezone,
-    startTime: this.startTime,
-    endTime: this.endTime,
-  };
 });
 
 module.exports = mongoose.model('Schedule', Schedule);

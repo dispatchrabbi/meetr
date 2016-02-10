@@ -28,6 +28,7 @@
     "lodash": "^4.1.0",
     "mongoose": "^4.3.7",
     "node-uuid": "^1.4.7",
+    "painless-pbkdf2": "^0.1.2",
     "react": "^0.14.5",
     "react-dom": "^0.14.5",
     "style-loader": "^0.13.0",
