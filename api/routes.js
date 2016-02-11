@@ -25,9 +25,9 @@ const genericErrorHandler = function genericErrorHandler(defaultErrorMessage, re
   };
 };
 
-const routes = {
-  '/schedules': {
-    post: function post(req, res) {
+const handlers = {
+  schedule: {
+    create: function create(req, res) {
       const scheduleToCreate = new Schedule(req.body);
       scheduleToCreate.normalize();
       wrapMpromise(scheduleToCreate.validate())
@@ -40,12 +40,7 @@ const routes = {
         })
         .catch(genericErrorHandler('There was an error creating the schedule.'));
     },
-
-  },
-
-  '/schedules/:slug': {
-
-    get: function get(req, res) {
+    getBySlug: function getBySlug(req, res) {
       wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
         .then(function sendScheduleBack(foundSchedule) {
           if (!foundSchedule) {
@@ -56,7 +51,6 @@ const routes = {
         })
         .catch(genericErrorHandler('There was an error finding the schedule.', req, res));
     },
-
     patch: function patch(req, res) {
       // find the Schedule to modify
       wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
@@ -81,8 +75,7 @@ const routes = {
         })
         .catch(genericErrorHandler('There was an error patching the schedule.', req, res));
     },
-
-    delete: function del(req, res) {
+    delete: function _delete(req, res) {
       // Find the Schedule to remove
       wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
         .then(function removeSchedule(foundSchedule) {
@@ -98,12 +91,9 @@ const routes = {
         })
         .catch(genericErrorHandler('There was an error deleting the schedule.', req, res));
     },
-
   },
-
-  '/schedules/:slug/participants': {
-
-    get: function get(req, res) {
+  participant: {
+    getAllForSchedule: function getAllForSchedule(req, res) {
       wrapMpromise(Schedule.findOne({ slug: req.params.slug }).exec())
         .then(function findParticipants(foundSchedule) {
           if (!foundSchedule) {
@@ -117,10 +107,7 @@ const routes = {
         })
         .catch(genericErrorHandler('There was an error finding the participants.', req, res));
     },
-
-    // TODO: Some kind of session middleware, where here we add this user to the session and make sure we don't let
-    // other folks modify this user
-    post: function post(req, res) {
+    registerOrVerify: function registerOrVerify(req, res) {
       /* eslint-disable no-var */ // We need to use a closure here, and Node doesn't like us using `let`.
       var participantSchedule;
       var created = false;
@@ -166,52 +153,41 @@ const routes = {
         })
         .catch(genericErrorHandler('There was an error registering the participant.', req, res));
     },
-
-  },
-
-  '/schedules/:slug/participants/:pId': {
-
-    get: function get(req, res) {
+    getById: function getById(req, res) {
       res.status(501).send('Not yet implemented.');
     },
-
     patch: function patch(req, res) {
       res.status(501).send('Not yet implemented.');
     },
-
-    delete: function del(req, res) {
+    delete: function _delete(req, res) {
       res.status(501).send('Not yet implemented.');
     },
-
   },
 };
 
-const decorate = function decorate(router, routeConfig) {
-  _.each(routeConfig, (methods, route) => {
-    // scope to this route
-    const scopedRouter = router.route(route);
+const addAPIRoutes = function addAPIRoutes(router) {
+  router.use(logRoute);
 
-    _.each(methods, (handler, method) => {
-      // start with the actual handler
-      const handlers = [handler];
+  router.route('/schedules')
+    .post(ensureApplicationJson, handlers.schedule.create);
 
-      // then middleware gets applied:
-      // Log the route for debug purposes
-      handlers.unshift(logRoute);
-      // Make sure POST and PATCH requests are application/json
-      if (['post', 'patch'].indexOf(method) >= 0) {
-        handlers.unshift(ensureApplicationJson);
-      }
+  router.route('/schedules/:slug')
+    .get(handlers.schedule.getBySlug)
+    .patch(ensureApplicationJson, handlers.schedule.patch)
+    .delete(ensureApplicationJson, handlers.schedule.delete);
 
-      // call the appropriate method with the middleware and handler
-      scopedRouter[method](...handlers);
-    });
-  });
+  router.route('/schedules/:slug/participants')
+    .get(handlers.participant.getAllForSchedule)
+    .post(ensureApplicationJson, handlers.participant.registerOrVerify);
+
+  router.route('/participants/:participantId')
+    .get(handlers.participant.getById)
+    .patch(ensureApplicationJson, handlers.participant.patch)
+    .delete(ensureApplicationJson, handlers.participant.delete);
 
   return router;
 };
 
 module.exports = {
-  routes,
-  decorate,
+  addAPIRoutes,
 };

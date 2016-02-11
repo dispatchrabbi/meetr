@@ -22,7 +22,7 @@ dbConnect.connect(mongoose, CONFIG.db.address, CONFIG.db.name)
 
     logger.debug('Adding API routes...');
     /* eslint-disable new-cap */ // express.Router doesn't let you use `new`
-    const apiRouter = apiRoutes.decorate(express.Router(), apiRoutes.routes);
+    const apiRouter = apiRoutes.decorate(express.Router());
     /* eslint-enable new-cap */
     app.use('/api', apiRouter);
 
