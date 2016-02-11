@@ -40,6 +40,7 @@ Participant.method('verify', function verify(password) {
 
 Participant.method('sanitize', function sanitize() {
   return {
+    _id: this._id,
     name: this.name,
     availabilities: this.availabilities,
   };

@@ -4,6 +4,7 @@ const wrapMpromise = require('../lib/wrap-mpromise.js');
 
 const ensureApplicationJson = require('../lib/middleware/ensure-application-json.js');
 const logRoute = require('../lib/middleware/log-route.js');
+const checkForUser = require('../lib/middleware/check-for-user.js');
 
 const Schedule = require('../models/schedule.js');
 const Participant = require('../models/participant.js');
@@ -61,7 +62,7 @@ const handlers = {
 
           const modifiedSchedule = _.assign(foundSchedule, req.body);
           modifiedSchedule.normalize();
-          // validate() doesn't return the schedule, so we need to do that in a quick then here
+          // validate() doesn't return the schedule, so we need to do that in a quick `then` here
           // we'll also take the opportunity to munge any validation errors.
           return wrapMpromise(modifiedSchedule.validate())
             .then(() => modifiedSchedule, mungeValidationErrors);
@@ -150,19 +151,66 @@ const handlers = {
         })
         .then(function sendParticipantBack(registeredOrVerifiedParticipant) {
           // Store the participant in the session so we can use it in further requests
-          req.session.currentParticipant = registeredOrVerifiedParticipant;
+          req.session.user = registeredOrVerifiedParticipant;
           res.status(created ? 201 : 200).send(registeredOrVerifiedParticipant.sanitize());
         })
         .catch(genericErrorHandler('There was an error registering the participant.', req, res));
     },
     getById: function getById(req, res) {
-      res.status(501).send('Not yet implemented.');
+      wrapMpromise(Participant.findOne({
+        _id: req.params.participantId,
+        schedule: req.session.user.schedule,
+      }).exec())
+        .then(function sendParticipantBack(foundParticipant) {
+          if (!foundParticipant) {
+            throw new APIError('Could not find a participant with ID ' + req.params.participantId, 404);
+          }
+
+          res.status(200).send(foundParticipant.sanitize());
+        })
+        .catch(genericErrorHandler('There was an error finding the participant.', req, res));
     },
     patch: function patch(req, res) {
-      res.status(501).send('Not yet implemented.');
+      wrapMpromise(Participant.findOne({
+        _id: req.params.participantId,
+        schedule: req.session.user.schedule,
+      }).exec())
+        .then(function modifyAndValidate(foundParticipant) {
+          if (!foundParticipant) {
+            throw new APIError('Could not find a participant with ID ' + req.params.participantId, 404);
+          }
+
+          const modifiedParticipant = _.assign(foundParticipant, req.body);
+          // validate() doesn't return the schedule, so we need to do that in a quick `then` here
+          // we'll also take the opportunity to munge any validation errors.
+          return wrapMpromise(modifiedParticipant.validate())
+            .then(() => modifiedParticipant, mungeValidationErrors);
+        })
+        .then(function saveParticipant(validParticipant) {
+          return wrapMpromise(validParticipant.save());
+        })
+        .then(function sendParticipantBack(savedParticipant) {
+          res.status(200).send(savedParticipant.sanitize());
+        })
+        .catch(genericErrorHandler('There was an error patching the participant.', req, res));
     },
     delete: function _delete(req, res) {
-      res.status(501).send('Not yet implemented.');
+      wrapMpromise(Participant.findOne({
+        _id: req.params.participantId,
+        schedule: req.session.user.schedule,
+      }).exec())
+        .then(function removeParticipant(foundParticipant) {
+          if (!foundParticipant) {
+            throw new APIError('Could not find a participant with the ID ' + req.params.participantId + '.', 404);
+          }
+
+          return wrapMpromise(foundParticipant.remove());
+        })
+        .then(function sendParticipantBack(removedParticipant) {
+          // and finally send it back
+          res.status(200).send(removedParticipant.sanitize());
+        })
+        .catch(genericErrorHandler('There was an error deleting the participant.', req, res));
     },
   },
 };
@@ -181,9 +229,9 @@ const addAPIRoutes = function addAPIRoutes(router) {
     .post(logRoute, ensureApplicationJson, handlers.participant.registerOrVerify);
 
   router.route('/participants/:participantId')
-    .get(logRoute, handlers.participant.getById)
-    .patch(logRoute, ensureApplicationJson, handlers.participant.patch)
-    .delete(logRoute, ensureApplicationJson, handlers.participant.delete);
+    .get(logRoute, checkForUser, handlers.participant.getById)
+    .patch(logRoute, checkForUser, ensureApplicationJson, handlers.participant.patch)
+    .delete(logRoute, checkForUser, ensureApplicationJson, handlers.participant.delete);
 
   return router;
 };
