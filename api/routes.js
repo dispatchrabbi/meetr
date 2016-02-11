@@ -149,6 +149,8 @@ const handlers = {
             });
         })
         .then(function sendParticipantBack(registeredOrVerifiedParticipant) {
+          // Store the participant in the session so we can use it in further requests
+          req.session.currentParticipant = registeredOrVerifiedParticipant;
           res.status(created ? 201 : 200).send(registeredOrVerifiedParticipant.sanitize());
         })
         .catch(genericErrorHandler('There was an error registering the participant.', req, res));
@@ -166,24 +168,22 @@ const handlers = {
 };
 
 const addAPIRoutes = function addAPIRoutes(router) {
-  router.use(logRoute);
-
   router.route('/schedules')
-    .post(ensureApplicationJson, handlers.schedule.create);
+    .post(logRoute, ensureApplicationJson, handlers.schedule.create);
 
   router.route('/schedules/:slug')
-    .get(handlers.schedule.getBySlug)
-    .patch(ensureApplicationJson, handlers.schedule.patch)
-    .delete(ensureApplicationJson, handlers.schedule.delete);
+    .get(logRoute, handlers.schedule.getBySlug)
+    .patch(logRoute, ensureApplicationJson, handlers.schedule.patch)
+    .delete(logRoute, ensureApplicationJson, handlers.schedule.delete);
 
   router.route('/schedules/:slug/participants')
-    .get(handlers.participant.getAllForSchedule)
-    .post(ensureApplicationJson, handlers.participant.registerOrVerify);
+    .get(logRoute, handlers.participant.getAllForSchedule)
+    .post(logRoute, ensureApplicationJson, handlers.participant.registerOrVerify);
 
   router.route('/participants/:participantId')
-    .get(handlers.participant.getById)
-    .patch(ensureApplicationJson, handlers.participant.patch)
-    .delete(ensureApplicationJson, handlers.participant.delete);
+    .get(logRoute, handlers.participant.getById)
+    .patch(logRoute, ensureApplicationJson, handlers.participant.patch)
+    .delete(logRoute, ensureApplicationJson, handlers.participant.delete);
 
   return router;
 };
