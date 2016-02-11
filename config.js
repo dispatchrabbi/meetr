@@ -11,4 +11,7 @@ module.exports = {
     address: process.env.MONGO_PORT_27017_TCP_ADDR + ':' + process.env.MONGO_PORT_27017_TCP_PORT,
     name: process.env.DB_NAME || 'meetr',
   },
+  session: {
+    secret: process.env.SESSION_SECRET || 'meetr is awesome',
+  },
 };
