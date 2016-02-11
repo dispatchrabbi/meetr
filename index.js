@@ -1,68 +1,57 @@
-/* eslint no-console: 0 */
 const mongoose = require('mongoose');
 const dbConnect = require('./lib/db-connect.js');
 
 const express = require('express');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const bodyParser = require('body-parser');
-const ensureApplicationJson = require('./lib/ensure-application-json.js');
-const schedulesRoutes = require('./routes/schedules.js');
+const reqLogger = require('./lib/middleware/req-logger.js');
+const apiRoutes = require('./api/routes.js');
 
 const CONFIG = require('./config.js');
 
-console.info('Connecting to MongoDB...');
-dbConnect.connect(mongoose, CONFIG.db.address, CONFIG.db.name)
-  .then(function createServer() {
-    const app = express();
-    app.use(bodyParser.json()); // automatically parse JSON in the request body
+const logger = require('./logger.js');
 
-    console.info('Adding routes...');
+logger.debug('Connecting to MongoDB...');
+dbConnect.connect(mongoose, CONFIG.db.address, CONFIG.db.name)
+  .catch(function complainAboutMongo(err) {
+    logger.error({ err }, 'Could not connect to MongoDB.');
+  })
+  .then(function createServer(dbConnection) {
+    const app = express();
+
+    logger.debug('Installing middleware...');
+    // Parse the request body as JSON (if possible)
+    app.use(bodyParser.json());
+    // Create or retrieve a session for this request
+    app.use(session({
+      name: CONFIG.app.name + '.sid',
+      secret: CONFIG.session.secret,
+      store: new MongoStore({ mongooseConnection: dbConnection }),
+      cookie: { secure: 'auto' }, // secure cookies when accessed by HTTPS; non-secure cookies when accessed by HTTP
+      resave: false, // don't save the session if we didn't modify it at all
+      saveUninitialized: false, // don't save a new session unless we modified it somehow
+      // unset: 'destroy', // remove the session from the store if req.session is deleted/set to null
+    }));
+    // Log data about the request
+    app.use(reqLogger(logger));
+
+    logger.debug('Adding API routes...');
+    /* eslint-disable new-cap */ // express.Router doesn't let you use `new`
+    const apiRouter = apiRoutes.addAPIRoutes(express.Router());
+    /* eslint-enable new-cap */
+    app.use('/api', apiRouter);
+
+    logger.debug('Adding static routes...');
     app.get('/', function _rootGet(req, res) {
       res.status(200).send('Meetr is up!');
     });
 
-    app.route('/schedules')
-      .post(ensureApplicationJson, function _schedulesPost(req, res) {
-        console.info('/schedules hit');
-        return schedulesRoutes.schedulesPost(req, res);
-      });
-
-    app.route('/schedules/:scheduleSlug')
-      .get(function _scheduleGet(req, res) {
-        console.info('/schedules/' + req.params.scheduleSlug + ' hit');
-        return schedulesRoutes.scheduleGet(req, res);
-      })
-      .patch(ensureApplicationJson, function _schedulePatch(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      })
-      .delete(function _scheduleDelete(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      });
-
-    app.route('/schedules/:scheduleSlug/participants')
-      .get(function _participantsGet(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      })
-      .post(ensureApplicationJson, function _participantsPost(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      });
-
-    app.route('/schedules/:scheduleSlug/participants/:participantId')
-      .get(function _participantGet(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      })
-      .patch(ensureApplicationJson, function _participantPatch(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      })
-      .delete(function _participantDelete(req, res) {
-        res.status(501).send(new Error('Not yet implemented.'));
-      });
-
-    console.info('Standing up the server...');
+    logger.debug('Standing up the server...');
     app.listen(CONFIG.app.port);
 
-    console.log('Meetr is up and listening on port ' + CONFIG.app.port + '.');
+    logger.info('Meetr is up and listening on port ' + CONFIG.app.port + '.');
   })
   .catch(function screamAndDie(err) {
-    console.error('Could not connect to MongoDB. Error:');
-    console.error(err);
+    logger.error({ err }, 'An error occurred setting up the server');
   });
