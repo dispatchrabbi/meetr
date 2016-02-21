@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// TODO: Make a development version and a production version
 module.exports = {
   context: __dirname + '/src',
   entry: [
@@ -25,6 +26,7 @@ module.exports = {
       hash: true,
     }),
   ],
+  devtool: 'source-map',
 
   module: {
     loaders: [
