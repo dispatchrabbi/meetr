@@ -1,15 +1,7 @@
+import schedule from '../models/schedule.js';
+
 export const WILL_CREATE_SCHEDULE = 'WILL_CREATE_SCHEDULE';
 export const DID_CREATE_SCHEDULE = 'DID_CREATE_SCHEDULE';
-
-// FIXME: 1 move this to a model or something. It doesn't belong here
-// FIXME: Error handling from the server is atrocious too
-const _makeCreateScheduleRequest = function _makeCreateScheduleRequest(scheduleData) {
-  return fetch('/api/schedules', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(scheduleData),
-  }).then(res => res.json());
-};
 
 const willCreateSchedule = function willCreateSchedule(scheduleData) {
   return {
@@ -38,9 +30,9 @@ export const createSchedule = function createSchedule(title, definite, startDay,
   // Return a thunk for the thunk middleware
   return function createScheduleThunk(dispatch) {
     dispatch(willCreateSchedule(scheduleData));
-    return _makeCreateScheduleRequest(scheduleData)
+    return schedule.create(scheduleData)
       .then(
-        schedule => dispatch(didCreateSchedule(schedule)),
+        createdSchedule => dispatch(didCreateSchedule(createdSchedule)),
         err => dispatch(didCreateSchedule(err))
       ); // The same action is dispatched whether there was an error or not
   };

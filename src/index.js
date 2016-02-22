@@ -6,7 +6,7 @@ import MAIN_CSS from './styles/main.css';
 import BOOTSTRAP_JS from 'bootstrap/dist/js/bootstrap.min';
 /* eslint-enable no-unused-vars */
 
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { app } from './reducers/app.js';
 
@@ -16,10 +16,13 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './components/app.js';
 
-const createStoreWithDevTools = window.devToolsExtension ? window.devToolsExtension()(createStore) : createStore;
 const store = createStore(
   app,
-  applyMiddleware(thunkMiddleware)
+  {},
+  compose(
+    applyMiddleware(thunkMiddleware),
+    window.devToolsExtension ? window.devToolsExtension() : noop => noop
+  )
 );
 
 ReactDOM.render(

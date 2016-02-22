@@ -90,8 +90,9 @@ const ScheduleForm = React.createClass({
           <input className="form-control" id="timezone" ref="timezone" />
         </div>
         <div className="form-group">
-          <button type="button" onClick={() => { this.props.onSubmitClick(this.buildSubmitClickArgument()); }} className="btn btn-default">{this.props.submitText}</button>
-          {this.props.isSubmitting ? <span>SWOOSH</span> : ''}
+          <button type="button" onClick={() => { this.props.onSubmitClick(this.buildSubmitClickArgument()); }} className="btn btn-default">
+            <span className={this.props.isSubmitting ? 'glyphicon glyphicon-repeat spinning' : 'glyphicon glyphicon-plus'}></span> {this.props.submitText}
+          </button>
           {this.props.submitError ? <p className="bg-danger">{this.props.submitError}</p> : ''}
         </div>
       </form>
