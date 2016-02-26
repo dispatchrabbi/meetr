@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo')(session);
 const bodyParser = require('body-parser');
 const reqLogger = require('./lib/middleware/req-logger.js');
 const apiRoutes = require('./api/routes.js');
+const addDevServer = require('./lib/middleware/add-dev-server.js');
 
 const CONFIG = require('./config.js');
 
@@ -43,9 +44,13 @@ dbConnect.connect(mongoose, CONFIG.db.address, CONFIG.db.name)
     app.use('/api', apiRouter);
 
     logger.debug('Adding static routes...');
-    app.get('/', function _rootGet(req, res) {
-      res.status(200).send('Meetr is up!');
-    });
+    if (!CONFIG.development) {
+      app.get('*', function serveFrontEnd(req, res) {
+        res.status(200).send('Meetr is up!');
+      });
+    } else {
+      addDevServer(app);
+    }
 
     logger.debug('Standing up the server...');
     app.listen(CONFIG.app.port);

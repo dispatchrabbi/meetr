@@ -17,4 +17,4 @@ COPY . $APPDIR
 EXPOSE 8080
 
 # Start the app, Kronk!
-CMD [ "node", "./index.js" ]
+CMD [ "npm", "run", "dev" ]

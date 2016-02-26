@@ -2,6 +2,7 @@ const PACKAGE = require('./package.json');
 
 module.exports = {
   debug: !!process.env.DEBUG,
+  development: !!process.env.DEVELOPMENT,
   app: {
     name: PACKAGE.name,
     version: PACKAGE.version,
