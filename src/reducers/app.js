@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import {
   WILL_CREATE_SCHEDULE, DID_CREATE_SCHEDULE,
   UNLOAD_SCHEDULE,
@@ -41,13 +40,8 @@ const schedule = function schedule(state = null, action) {
   }
 };
 
-const _app = combineReducers({
+export default {
   schedule,
   scheduleCreationError,
   isCreatingSchedule,
-});
-
-export const app = function app(...args) {
-  console.log('state:', args);
-  return _app(...args);
 };

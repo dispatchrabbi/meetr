@@ -6,28 +6,49 @@ import MAIN_CSS from './styles/main.css';
 import BOOTSTRAP_JS from 'bootstrap/dist/js/bootstrap.min';
 /* eslint-enable no-unused-vars */
 
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { app } from './reducers/app.js';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider } from 'react-redux';
+
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
+
+import reducers from './reducers/app.js';
 import App from './components/app.js';
+import CreateSchedulePage from './components/create-schedule-page.js';
+import ViewSchedulePage from './components/view-schedule-page.js';
+
+const appReducerWithRouting = combineReducers(Object.assign({}, reducers, {
+  routing: routerReducer,
+}));
 
 const store = createStore(
-  app,
-  {},
+  appReducerWithRouting,
   compose(
-    applyMiddleware(thunkMiddleware),
+    applyMiddleware(
+      routerMiddleware(browserHistory),
+      thunkMiddleware
+    ),
     window.devToolsExtension ? window.devToolsExtension() : noop => noop
   )
 );
+const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <div>
+      <Router history={history}>
+        <Route path="/" component={App}>
+          <IndexRoute component={CreateSchedulePage}/>
+          <Route path="/schedules/:slug" component={ViewSchedulePage}/>
+          {/* add an about page, eventually */}
+        </Route>
+      </Router>
+    </div>
   </Provider>,
   document.getElementById('root')
 );

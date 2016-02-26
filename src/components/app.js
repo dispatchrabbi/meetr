@@ -1,42 +1,44 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import CreateScheduleForm from './create-schedule-form.js';
+import { unloadSchedule } from '../actions/schedule.js';
+import { push } from 'react-router-redux';
 
 const App = React.createClass({
   propTypes: {
-    schedule: PropTypes.object,
+    children: PropTypes.node,
+    onHeaderClick: PropTypes.func,
   },
 
   render: function render() {
     return (
       <div className="container">
-        <div className="page-header">
-          <h1>Meetr <small>Like when2jeremy, but with more.</small></h1>
+        <div className="page-header row">
+          <h1 onClick={this.props.onHeaderClick}>Meetr <small>Like when2jeremy but better.</small></h1>
         </div>
-        {
-          this.props.schedule ?
-            <div>
-              <h2>Schedule exists!</h2>
-              <pre>{JSON.stringify(this.props.schedule)}</pre>
-            </div>
-          :
-            <CreateScheduleForm />
-        }
+        {this.props.children}
       </div>
     );
   },
 });
 
-const mapStateToProps = function mapStateToProps(state) {
+const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    schedule: state.schedule,
+    onHeaderClick: function onHeaderClickUnloadSchedule() {
+      // Unload the schedule...
+      dispatch(unloadSchedule());
+
+      // ... then navigate back to the home page (if we're not there already)
+      if (location.pathname !== '/') {
+        dispatch(push('/'));
+      }
+    },
   };
 };
 
 const ConnectedApp = connect(
-  mapStateToProps,
-  null
+  null,
+  mapDispatchToProps
 )(App);
 
 export default ConnectedApp;
