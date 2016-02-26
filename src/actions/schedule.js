@@ -50,6 +50,43 @@ export const createSchedule = function createSchedule(title, definite, startDay,
   };
 };
 
+// willLoadSchedule
+export const WILL_LOAD_SCHEDULE = 'WILL_LOAD_SCHEDULE';
+export const willLoadSchedule = function willLoadSchedule(scheduleSlug) {
+  return {
+    type: WILL_LOAD_SCHEDULE,
+    payload: scheduleSlug,
+  };
+};
+
+// didLoadSchedule
+export const DID_LOAD_SCHEDULE = 'DID_LOAD_SCHEDULE';
+export const didLoadSchedule = function didLoadSchedule(loadedScheduleOrError) {
+  return {
+    type: DID_LOAD_SCHEDULE,
+    payload: loadedScheduleOrError,
+    error: loadedScheduleOrError instanceof Error,
+  };
+};
+
+export const loadSchedule = function loadSchedule(scheduleSlug) {
+  return function loadScheduleThunk(dispatch) {
+    // Let everyone know we're about to load a schedule
+    dispatch(willLoadSchedule(scheduleSlug));
+
+    // Return a promise so others can play too
+    return schedule.getBySlug(scheduleSlug)
+      .then(function dispatchDidLoadSchedule(loadedSchedule) {
+        dispatch(didLoadSchedule(loadedSchedule));
+        return loadedSchedule;
+      })
+      .catch(function dispatchDidLoadScheduleWithError(error) {
+        dispatch(didLoadSchedule(error));
+        throw error;
+      });
+  };
+};
+
 // unloadSchedule
 export const UNLOAD_SCHEDULE = 'UNLOAD_SCHEDULE';
 export const unloadSchedule = function unloadSchedule() {
