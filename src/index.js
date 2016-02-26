@@ -30,9 +30,10 @@ const store = createStore(
   appReducerWithRouting,
   compose(
     applyMiddleware(
-      routerMiddleware(browserHistory),
-      thunkMiddleware
+      routerMiddleware(browserHistory), // let us use history-related action creators
+      thunkMiddleware // for dispatching async actions
     ),
+    // TODO: Introduce devtime/production switch here
     window.devToolsExtension ? window.devToolsExtension() : noop => noop
   )
 );
@@ -40,15 +41,13 @@ const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
   <Provider store={store}>
-    <div>
-      <Router history={history}>
-        <Route path="/" component={App}>
-          <IndexRoute component={CreateSchedulePage}/>
-          <Route path="/schedules/:slug" component={ViewSchedulePage}/>
-          {/* add an about page, eventually */}
-        </Route>
-      </Router>
-    </div>
+    <Router history={history}>
+      <Route path="/" component={App}>
+        <IndexRoute component={CreateSchedulePage}/>
+        <Route path="/schedules/:slug" component={ViewSchedulePage}/>
+        {/* add an about page, eventually */}
+      </Route>
+    </Router>
   </Provider>,
   document.getElementById('root')
 );

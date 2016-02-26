@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
-const CreateSchedulePage = React.createClass({
+const ViewSchedulePage = React.createClass({
   propTypes: {
     params: PropTypes.object,
     schedule: PropTypes.object,
@@ -16,4 +17,15 @@ const CreateSchedulePage = React.createClass({
   },
 });
 
-export default CreateSchedulePage;
+const mapStateToProps = function mapDispatchToProps(state) {
+  return {
+    schedule: state.schedule,
+  };
+};
+
+const ConnectedViewSchedulePage = connect(
+  mapStateToProps,
+  null
+)(ViewSchedulePage);
+
+export default ConnectedViewSchedulePage;
