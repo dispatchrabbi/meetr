@@ -132,7 +132,7 @@ const handlers = {
             throw new APIError('No password provided.', 400);
           }
 
-          return wrapMpromise(Participant.findOne({ name: req.body.name }).exec());
+          return wrapMpromise(Participant.findOne({ name: req.body.name, schedule: foundSchedule._id }).exec());
         })
         .then(function verifyOrRegisterParticipant(foundParticipant) {
           if (!foundParticipant) {

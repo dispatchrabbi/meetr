@@ -9,6 +9,7 @@ import {
   DID_LOG_IN_USER,
   WILL_UPDATE_USER,
   DID_UPDATE_USER,
+  LOG_OUT_USER,
 } from '../actions/participants.js';
 
 export const isLoadingParticipants = function isLoadingParticipants(state = false, action) {
@@ -72,6 +73,7 @@ export const loginError = function loginError(state = null, action) {
 
 export const userParticipant = function userParticipant(state = null, action) {
   switch (action.type) {
+    case LOG_OUT_USER:
     case UNLOAD_SCHEDULE:
       return null;
     case DID_LOAD_PARTICIPANTS:

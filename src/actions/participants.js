@@ -113,3 +113,11 @@ export const updateUser = function updateUser(scheduleSlug, user, updatedAvailab
       });
   };
 };
+
+// FIXME: Make this actually talk to the server instead of just being front-end
+export const LOG_OUT_USER = 'LOG_OUT_USER';
+export const logOutUser = function logOutUser() {
+  return {
+    type: LOG_OUT_USER,
+  };
+};
