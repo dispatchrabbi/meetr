@@ -80,9 +80,9 @@ export const loadSchedule = function loadSchedule(scheduleSlug) {
         dispatch(didLoadSchedule(loadedSchedule));
         return loadedSchedule;
       })
-      .catch(function dispatchDidLoadScheduleWithError(error) {
-        dispatch(didLoadSchedule(error));
-        throw error;
+      .catch(function dispatchDidLoadScheduleWithError(err) {
+        dispatch(didLoadSchedule(err));
+        throw err;
       });
   };
 };
