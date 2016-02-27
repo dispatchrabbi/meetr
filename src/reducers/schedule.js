@@ -4,7 +4,7 @@ import {
   UNLOAD_SCHEDULE,
 } from '../actions/schedule.js';
 
-const isCreatingSchedule = function isCreatingSchedule(state = false, action) {
+export const isCreatingSchedule = function isCreatingSchedule(state = false, action) {
   switch (action.type) {
     case WILL_CREATE_SCHEDULE:
       return true;
@@ -16,7 +16,7 @@ const isCreatingSchedule = function isCreatingSchedule(state = false, action) {
   }
 };
 
-const scheduleCreationError = function scheduleCreationError(state = null, action) {
+export const scheduleCreationError = function scheduleCreationError(state = null, action) {
   switch (action.type) {
     case WILL_CREATE_SCHEDULE: // fall through
     case UNLOAD_SCHEDULE:
@@ -28,7 +28,7 @@ const scheduleCreationError = function scheduleCreationError(state = null, actio
   }
 };
 
-const isLoadingSchedule = function isLoadingSchedule(state = false, action) {
+export const isLoadingSchedule = function isLoadingSchedule(state = false, action) {
   switch (action.type) {
     case WILL_LOAD_SCHEDULE:
       return true;
@@ -40,7 +40,7 @@ const isLoadingSchedule = function isLoadingSchedule(state = false, action) {
   }
 };
 
-const scheduleLoadError = function scheduleLoadError(state = null, action) {
+export const scheduleLoadError = function scheduleLoadError(state = null, action) {
   switch (action.type) {
     case WILL_LOAD_SCHEDULE: // fall through
     case UNLOAD_SCHEDULE:
@@ -52,7 +52,7 @@ const scheduleLoadError = function scheduleLoadError(state = null, action) {
   }
 };
 
-const schedule = function schedule(state = null, action) {
+export const schedule = function schedule(state = null, action) {
   switch (action.type) {
     case UNLOAD_SCHEDULE:
       return null;
@@ -62,12 +62,4 @@ const schedule = function schedule(state = null, action) {
     default:
       return state;
   }
-};
-
-export default {
-  isCreatingSchedule,
-  scheduleCreationError,
-  isLoadingSchedule,
-  scheduleLoadError,
-  schedule,
 };

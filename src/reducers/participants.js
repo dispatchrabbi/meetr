@@ -11,7 +11,7 @@ import {
   DID_UPDATE_USER,
 } from '../actions/participants.js';
 
-const isLoadingParticipants = function isLoadingParticipants(state = false, action) {
+export const isLoadingParticipants = function isLoadingParticipants(state = false, action) {
   switch (action.type) {
     case WILL_LOAD_PARTICIPANTS:
       return true;
@@ -23,7 +23,7 @@ const isLoadingParticipants = function isLoadingParticipants(state = false, acti
   }
 };
 
-const participantsLoadError = function participantsLoadError(state = null, action) {
+export const participantsLoadError = function participantsLoadError(state = null, action) {
   switch (action.type) {
     case WILL_LOAD_PARTICIPANTS:
     case UNLOAD_SCHEDULE:
@@ -35,7 +35,7 @@ const participantsLoadError = function participantsLoadError(state = null, actio
   }
 };
 
-const participants = function participants(state = null, action) {
+export const participants = function participants(state = null, action) {
   switch (action.type) {
     case UNLOAD_SCHEDULE:
       return null;
@@ -46,7 +46,7 @@ const participants = function participants(state = null, action) {
   }
 };
 
-const isLoggingIn = function isLoggingIn(state = false, action) {
+export const isLoggingIn = function isLoggingIn(state = false, action) {
   switch (action.type) {
     case WILL_LOG_IN_USER:
       return true;
@@ -58,7 +58,7 @@ const isLoggingIn = function isLoggingIn(state = false, action) {
   }
 };
 
-const loginError = function loginError(state = null, action) {
+export const loginError = function loginError(state = null, action) {
   switch (action.type) {
     case WILL_LOG_IN_USER: // fall through
     case UNLOAD_SCHEDULE:
@@ -70,7 +70,7 @@ const loginError = function loginError(state = null, action) {
   }
 };
 
-const userParticipant = function userParticipant(state = null, action) {
+export const userParticipant = function userParticipant(state = null, action) {
   switch (action.type) {
     case UNLOAD_SCHEDULE:
       return null;
@@ -82,13 +82,4 @@ const userParticipant = function userParticipant(state = null, action) {
     default:
       return state;
   }
-};
-
-export default {
-  isLoadingParticipants,
-  participantsLoadError,
-  participants,
-  isLoggingIn,
-  loginError,
-  userParticipant,
 };
