@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import { createSchedule } from '../actions/schedule.js';
+import { loadParticipants } from '../actions/participants.js';
 import { push } from 'react-router-redux';
 
 const CreateSchedulePage = React.createClass({
@@ -51,6 +52,7 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
       )).then(function navigateToCreatedSchedule(createdSchedule) {
         // If the schedule was created okay, navigate to show it
         dispatch(push('/schedules/' + createdSchedule.slug));
+        return dispatch(loadParticipants(createdSchedule.slug));
       });
     },
   };
