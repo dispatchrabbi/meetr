@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { loadSchedule } from '../actions/schedule.js';
 import { loadParticipants, logInUser } from '../actions/participants.js';
+import LogScheduleGrid from './log-schedule-grid.js';
 
 const ViewSchedulePage = React.createClass({
   propTypes: {
@@ -27,6 +28,9 @@ const ViewSchedulePage = React.createClass({
           <h3>View Schedule Page ({this.props.params.slug})</h3>
           <pre>{JSON.stringify(this.props.schedule)}</pre>
           <pre>{JSON.stringify(this.props.participants)}</pre>
+        </div>
+        <div className="row">
+          <LogScheduleGrid/>
         </div>
         <div className="row">
           { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
