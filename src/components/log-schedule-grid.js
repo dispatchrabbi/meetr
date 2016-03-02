@@ -14,13 +14,8 @@ const LogScheduleGrid = connect(
   mapDispatchToProps,
   function mergeProps(stateProps, dispatchProps, ownProps) {
     return Object.assign({
-      columns: days.map(day => { return { label: day, key: day.toLowerCase() }; }),
-      rows: times.map(time => {
-        return {
-          label: time % 3600 ? null : Math.trunc(time / 3600) + ':00',
-          key: 't' + time,
-        };
-      }),
+      columns: days.map(day => { return { key: day.toLowerCase(), label: day }; }),
+      rows: times.map(time => { return { key: 't' + time, label: time % 3600 ? null : Math.trunc(time / 3600) + ':00' }; }),
 
       cellValue: function cellValue(rowKey, colKey, intersects) {
         return intersects ? '✓' : '✕';

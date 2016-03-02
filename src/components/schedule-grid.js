@@ -29,11 +29,21 @@ const ScheduleGrid = React.createClass({
     this.cellRects = {};
   },
 
+  componentDidMount: function componentDidMount() {
+    window.addEventListener('mousemove', this.updateMouseMovements);
+    window.addEventListener('mouseup', this.clearAndReportMouseMovements);
+  },
+
   componentWillReceiveProps: function componentWillReceiveProps() {
     this.setState({
       mouseDownPoint: null,
       mouseMovePoint: null,
     });
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    window.removeEventListener('mousemove', this.updateMouseMovements);
+    window.removeEventListener('mouseup', this.clearAndReportMouseMovements);
   },
 
   getIntersectingCells: function getIntersectingCells() {
