@@ -20,14 +20,15 @@ export const didCreateSchedule = function didCreateSchedule(createdScheduleOrErr
 };
 
 // createSchedule
-export const createSchedule = function createSchedule(title, definite, startDay, endDay, startDate, endDate, startTime, endTime, timezone) {
-  const scheduleData = Object.assign({
+export const createSchedule = function createSchedule(title, definite, days, startTime, endTime, timezone) {
+  const scheduleData = {
     title,
     definite,
+    days,
     timezone,
     startTime,
     endTime,
-  }, definite ? { startDate, endDate } : { startTime, endTime });
+  };
 
   // We need to do some async stuff, so we'll use a thunk and return the promise (for others to use)
   return function createScheduleThunk(dispatch) {

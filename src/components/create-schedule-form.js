@@ -13,17 +13,14 @@ const mapStateToProps = function mapStateToProps(state) {
 
 const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    onSubmitClick: function onSubmitClickCreateSchedule(vals) {
+    onSubmitClick: function onSubmitClickCreateSchedule({ title, definite, days, startTime, endTime, timezone }) {
       dispatch(createSchedule(
-        vals.title,
-        vals.definite,
-        vals.startDay,
-        vals.endDay,
-        vals.startDate,
-        vals.endDate,
-        vals.startTime,
-        vals.endTime,
-        vals.timezone
+        title,
+        definite,
+        days,
+        startTime,
+        endTime,
+        timezone
       ));
     },
   };
