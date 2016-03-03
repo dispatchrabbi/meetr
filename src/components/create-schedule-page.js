@@ -14,10 +14,11 @@ const CreateSchedulePage = React.createClass({
     return {
       title: 'Fake Click',
       definite: false,
-      startDay: 'Tuesday',
-      endDay: 'Friday',
-      startDate: null,
-      endDate: null,
+      days: [
+        'Tuesday',
+        'Thursday',
+        'Friday',
+      ],
       startTime: 3600,
       endTime: 7200,
       timezone: 'America/Baltimore',
@@ -38,17 +39,14 @@ const CreateSchedulePage = React.createClass({
 
 const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    onFakeButtonClick: function onFakeButtonClickDispatchCreateSchedule(vals) {
+    onFakeButtonClick: function onFakeButtonClickDispatchCreateSchedule({ title, definite, days, startTime, endTime, timezone }) {
       dispatch(createSchedule(
-        vals.title,
-        vals.definite,
-        vals.startDay,
-        vals.endDay,
-        vals.startDate,
-        vals.endDate,
-        vals.startTime,
-        vals.endTime,
-        vals.timezone
+        title,
+        definite,
+        days,
+        startTime,
+        endTime,
+        timezone
       )).then(function navigateToCreatedSchedule(createdSchedule) {
         // If the schedule was created okay, navigate to show it
         dispatch(push('/schedules/' + createdSchedule.slug));

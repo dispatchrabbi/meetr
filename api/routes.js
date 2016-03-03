@@ -30,7 +30,6 @@ const handlers = {
   schedule: {
     create: function create(req, res) {
       const scheduleToCreate = new Schedule(req.body);
-      scheduleToCreate.normalize();
       wrapMpromise(scheduleToCreate.validate())
         .catch(mungeValidationErrors)
         .then(function saveSchedule() {
@@ -61,7 +60,6 @@ const handlers = {
           }
 
           const modifiedSchedule = _.assign(foundSchedule, req.body);
-          modifiedSchedule.normalize();
           // validate() doesn't return the schedule, so we need to do that in a quick `then` here
           // we'll also take the opportunity to munge any validation errors.
           return wrapMpromise(modifiedSchedule.validate())

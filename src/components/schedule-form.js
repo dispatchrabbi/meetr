@@ -23,10 +23,7 @@ const ScheduleForm = React.createClass({
     return {
       title: this.refs.title.value,
       definite: this.state.definite,
-      startDay: this.refs.startDay ? this.refs.startDay.value : null,
-      endDay: this.refs.endDay ? this.refs.endDay.value : null,
-      startDate: this.refs.startDate ? this.refs.startDate.value : null,
-      endDate: this.refs.endDate ? this.refs.endDate.value : null,
+      days: this.refs.days.value.split(','),
       startTime: this.refs.startTime.value,
       endTime: this.refs.endTime.value,
       timezone: this.refs.timezone.value,
@@ -48,38 +45,10 @@ const ScheduleForm = React.createClass({
           <div className="checkbox">
             <label><input type="checkbox" id="definite" checked={this.state.definite} onChange={this.setDefinite} /> Use specific dates</label>
           </div>
-          {
-            this.state.definite ?
-            <div>
-              <label className="control-label" htmlFor="startDate">Start date:</label>
-              <input className="form-control" id="startDate" ref="startDate" />
-              <label className="control-label" htmlFor="endDate">End date:</label>
-              <input className="form-control" id="endDate" ref="endDate" />
-            </div>
-            :
-            <div>
-              <label className="control-label" htmlFor="startDay">Start day:</label>
-              <select className="form-control" id="startDay" ref="startDay">
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-              </select>
-              <label className="control-label" htmlFor="endDay">End day:</label>
-              <select className="form-control" id="endDay" ref="endDay">
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-              </select>
-            </div>
-          }
+          <div>
+            <label className="control-label" htmlFor="days">Days:</label>
+            <input className="form-control" id="days" ref="days"/>
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="startTime">Start time:</label>
