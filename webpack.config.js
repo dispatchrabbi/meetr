@@ -2,17 +2,17 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// Sass options + asset build management (with Eyeglass)
-const Eyeglass = require('eyeglass').Eyeglass;
-const SASS_OPTIONS = {};
+const bourbon = require('bourbon');
+const bourbonNeat = require('bourbon-neat');
 
-const eyeglass = new Eyeglass(SASS_OPTIONS);
-// Assets will live in (src/)assets/*, be referenced in Sass with assets-url(*/...), and copied to public/*.
-eyeglass.assets('assets/images', 'images', 'public/images');
-eyeglass.assets('assets/fonts', 'fonts', 'public/fonts');
+// Sass Options
+const SASS_OPTIONS = {
+  includePaths: [].concat(bourbon.includePaths, bourbonNeat.includePaths),
+};
 
 // TODO: Make a development version and a production version
 module.exports = {
+  debug: true,
   context: __dirname + '/src',
   entry: [
     'webpack-hot-middleware/client', // this module connects to the server to effect hot reloading
@@ -60,24 +60,8 @@ module.exports = {
         test: /\.scss$/,
         loaders: ['style', 'css?sourceMap', 'sass?sourceMap'],
       },
-
-      // Bootstrap loader
-      // **IMPORTANT** This is needed so that each bootstrap js file required by
-      // bootstrap-webpack has access to the jQuery object
-      { test: /bootstrap\/dist\/js\//, loader: 'imports?jQuery=jquery' },
-
-      // Needed for the css-loader when [bootstrap-webpack](https://github.com/bline/bootstrap-webpack)
-      // loads bootstrap's css.
-      /* eslint-disable no-multi-spaces */
-      { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,   loader: 'url?limit=10000&minetype=application/font-woff' },
-      { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,  loader: 'url?limit=10000&minetype=application/font-woff2' },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,    loader: 'url?limit=10000&minetype=application/octet-stream' },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,    loader: 'file' },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,    loader: 'url?limit=10000&minetype=image/svg+xml' },
-      /* eslint-enable no-multi-spaces */
     ],
   },
 
-  // Options to pass to node-sass
-  sassLoader: eyeglass.sassOptions(),
+  sassLoader: SASS_OPTIONS,
 };
