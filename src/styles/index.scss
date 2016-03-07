@@ -1,0 +1,17 @@
+@import "~normalize/normalize";
+
+@import "bourbon";
+@import "bourbon-neat";
+@import "base/base";
+
+/* Fake styles
+ * FIXME: erase these before production
+ */
+
+@-webkit-keyframes spinning {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+.spinning {
+  -webkit-animation: spinning 4s linear infinite;
+}

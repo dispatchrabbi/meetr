@@ -1,9 +1,7 @@
-// Disable no-unused-vars because we're just importing these to get the CSS and Bootstrap JS.
+// Disable no-unused-vars because we're just importing SCSS.
+// TODO: Investigate doing this not through the loader.
 /* eslint-disable no-unused-vars */
-import BOOTSTRAP_CSS from 'bootstrap/dist/css/bootstrap.css';
-import MAIN_CSS from './styles/main.css';
-
-import BOOTSTRAP_JS from 'bootstrap/dist/js/bootstrap.min';
+import MAIN_CSS from './styles/index.scss';
 /* eslint-enable no-unused-vars */
 
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';

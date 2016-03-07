@@ -101,7 +101,9 @@ const ScheduleGrid = React.createClass({
     }
   },
   clearAndReportMouseMovements: function clearAndReportMouseMovements(/* ev */) {
-    this.props.onSelectCells(this.getIntersectingCells());
+    if (this.state.mouseDownPoint) {
+      this.props.onSelectCells(this.getIntersectingCells());
+    }
 
     this.setState({
       mouseDownPoint: null,

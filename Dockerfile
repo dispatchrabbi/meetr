@@ -1,5 +1,5 @@
 # Run on top of an image that's got Node
-FROM node:latest
+FROM node:5
 
 # Set up where our app will live
 ENV APPDIR /srv/meetr
@@ -8,13 +8,15 @@ WORKDIR $APPDIR
 
 # Get dependencies set up
 COPY package.json $APPDIR/package.json
-RUN npm install
+# ENV NPM_CONFIG_LOGLEVEL warn # for less-verbose npm installs
+RUN npm --unsafe-perm install
+
 # Copy the app over
 COPY . $APPDIR
 
 # Expose the port we're serving the app out of
-# TODO: Make this an env var
-EXPOSE 8080
+ENV PORT 8080
+EXPOSE $PORT
 
 # Start the app, Kronk!
 CMD [ "npm", "run", "dev" ]

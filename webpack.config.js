@@ -2,6 +2,15 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// Sass options + asset build management (with Eyeglass)
+const Eyeglass = require('eyeglass').Eyeglass;
+const SASS_OPTIONS = {};
+
+const eyeglass = new Eyeglass(SASS_OPTIONS);
+// Assets will live in (src/)assets/*, be referenced in Sass with assets-url(*/...), and copied to public/*.
+eyeglass.assets('assets/images', 'images', 'public/images');
+eyeglass.assets('assets/fonts', 'fonts', 'public/fonts');
+
 // TODO: Make a development version and a production version
 module.exports = {
   context: __dirname + '/src',
@@ -10,7 +19,7 @@ module.exports = {
     './index',
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'public'),
     filename: 'bundle.js',
     publicPath: '/',
   },
@@ -43,7 +52,13 @@ module.exports = {
       // Style/CSS loader
       {
         test: /\.css$/,
-        loader: 'style!css',
+        loader: ['style', 'css'],
+      },
+
+      // Sass loader
+      {
+        test: /\.scss$/,
+        loaders: ['style', 'css?sourceMap', 'sass?sourceMap'],
       },
 
       // Bootstrap loader
@@ -62,4 +77,7 @@ module.exports = {
       /* eslint-enable no-multi-spaces */
     ],
   },
+
+  // Options to pass to node-sass
+  sassLoader: eyeglass.sassOptions(),
 };

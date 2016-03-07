@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { loadSchedule } from '../actions/schedule.js';
 import { loadParticipants, logInUser } from '../actions/participants.js';
+
+import ScheduleParticipantsList from './schedule-participants-list.js';
 import LogScheduleGrid from './log-schedule-grid.js';
 
 const ViewSchedulePage = React.createClass({
@@ -25,12 +27,41 @@ const ViewSchedulePage = React.createClass({
     return (
       <div>
         <div className="row">
-          <h3>View Schedule Page ({this.props.params.slug})</h3>
-          <pre>{JSON.stringify(this.props.schedule)}</pre>
-          <pre>{JSON.stringify(this.props.participants)}</pre>
+          <div className="col-md-12 col-xs-12">
+            { this.props.schedule ? <h3>{this.props.schedule.title} ({this.props.schedule.slug})</h3> : <h3></h3> }
+          </div>
         </div>
         <div className="row">
-          <LogScheduleGrid/>
+          <div className="col-md-4 col-xs-0">
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <h1 className="panel-title">Participants</h1>
+              </div>
+              { this.props.participants ? <ScheduleParticipantsList/> : <div></div> }
+            </div>
+          </div>
+          <div className="col-md-8 col-xs-12">
+            <div className="navbar navbar-default">
+              <div className="container-fluid">
+                <div className="navbar-header">
+                  <ul className="nav navbar-nav navbar-left">
+                    <li className="active"><button type="button" className="btn btn-link navbar-btn">Mode 1</button></li>
+                    <li><button type="button" className="btn btn-link navbar-btn">Mode 2</button></li>
+                  </ul>
+                </div>
+                <div className="navbar-collapse">
+                  <ul className="nav navbar-nav navbar-right">
+                    <li><button type="button" className="btn btn-primary navbar-btn">Edit Your Availability</button></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <LogScheduleGrid/>
+          </div>
+        </div>
+        <div className="row">
+          <pre>{JSON.stringify(this.props.schedule)}</pre>
+          <pre>{JSON.stringify(this.props.participants)}</pre>
         </div>
         <div className="row">
           { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
