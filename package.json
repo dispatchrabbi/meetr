@@ -30,6 +30,7 @@
     "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
     "lodash": "^4.1.0",
+    "moment": "^2.12.0",
     "mongoose": "^4.3.7",
     "node-uuid": "^1.4.7",
     "normalize.css": "^3.0.3",

@@ -1,0 +1,11 @@
+.participants-list {
+
+  li {
+    padding: $small-spacing;
+
+    &.stripe {
+      background-color: $secondary-background-color;
+    }
+  }
+
+}

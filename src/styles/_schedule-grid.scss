@@ -1,0 +1,31 @@
+.schedule-grid {
+  th,
+  td {
+    border: $base-border;
+    padding: $small-spacing;
+  }
+
+  thead th:first-child {
+    width: 4em;
+  }
+
+  tr :first-child {
+    text-align: right;
+  }
+
+  td {
+    text-align: center;
+
+    &.tier1 { background-color: $scale-single1-color; }
+    &.tier2 { background-color: $scale-single2-color; }
+    &.tier3 { background-color: $scale-single3-color; }
+    &.tier4 { background-color: $scale-single4-color; }
+    &.tier5 { background-color: $scale-single5-color; }
+    &.tier6 { background-color: $scale-single6-color; }
+    &.tier7 { background-color: $scale-single7-color; }
+
+    &.busy     { background-color: $busy-color; }
+    &.ifneedbe { background-color: $ifneedbe-color; }
+    &.free     { background-color: $free-color}
+  }
+}

@@ -1,0 +1,12 @@
+#schedule-container {
+  @include outer-container(100%);
+
+  .schedule-grid-container {
+    @include span-columns(9);
+  }
+
+  .participants-list-container {
+    @include span-columns(3);
+    @include omega();
+  }
+}

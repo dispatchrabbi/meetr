@@ -4,7 +4,8 @@ import { loadSchedule } from '../actions/schedule.js';
 import { loadParticipants, logInUser } from '../actions/participants.js';
 
 import ScheduleParticipantsList from './schedule-participants-list.js';
-import LogScheduleGrid from './log-schedule-grid.js';
+import ShowAvailabilityGrid from './show-availability-grid.js';
+import EditAvailabilityGrid from './edit-availability-grid.js';
 
 const ViewSchedulePage = React.createClass({
   propTypes: {
@@ -26,48 +27,29 @@ const ViewSchedulePage = React.createClass({
   render: function render() {
     return (
       <div>
-        <div className="row">
-          <div className="col-md-12 col-xs-12">
-            { this.props.schedule ? <h3>{this.props.schedule.title} ({this.props.schedule.slug})</h3> : <h3></h3> }
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-4 col-xs-0">
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h1 className="panel-title">Participants</h1>
-              </div>
-              { this.props.participants ? <ScheduleParticipantsList/> : <div></div> }
-            </div>
-          </div>
-          <div className="col-md-8 col-xs-12">
-            <div className="navbar navbar-default">
-              <div className="container-fluid">
-                <div className="navbar-header">
-                  <ul className="nav navbar-nav navbar-left">
-                    <li className="active"><button type="button" className="btn btn-link navbar-btn">Mode 1</button></li>
-                    <li><button type="button" className="btn btn-link navbar-btn">Mode 2</button></li>
-                  </ul>
-                </div>
-                <div className="navbar-collapse">
-                  <ul className="nav navbar-nav navbar-right">
-                    <li><button type="button" className="btn btn-primary navbar-btn">Edit Your Availability</button></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <LogScheduleGrid/>
-          </div>
-        </div>
-        <div className="row">
+        <h2>{this.props.schedule ? this.props.schedule.title : '...'}</h2>
+        <section id="schedule-container">
+          <section className="schedule-grid-container">
+            <h3>Availability</h3>
+            { this.props.participants ?
+              <ShowAvailabilityGrid/> :
+              <div></div>
+            }
+          </section>
+          <section className="participants-list-container">
+            <h3>Participants</h3>
+            { this.props.participants ? <ScheduleParticipantsList/> : <div></div> }
+          </section>
+        </section>
+        <section className="debug">
           <pre>{JSON.stringify(this.props.schedule)}</pre>
           <pre>{JSON.stringify(this.props.participants)}</pre>
-        </div>
-        <div className="row">
-          { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
-            return <div className="col-md-3" key={name}><button type="button" className="btn btn-default" onClick={() => { this.props.onLogInButtonClick(this.props.schedule.slug, name, 'Password' + ix); }}>Log in as {name} (Password{ix})</button></div>;
-          }) }
-        </div>
+        </section>
+        <section className="debug-buttons">
+        { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
+          return <div className="debug-button-cell" key={name}><button type="button" onClick={() => { this.props.onLogInButtonClick(this.props.schedule.slug, name, 'Password' + ix); }}>Log in as {name} (Password{ix})</button></div>;
+        }) }
+        </section>
       </div>
     );
   },

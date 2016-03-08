@@ -4,14 +4,11 @@
 @import "neat";
 @import "base/base";
 
-/* Fake styles
- * FIXME: erase these before production
- */
+@import "scale";
 
-@-webkit-keyframes spinning {
-  from { -webkit-transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); }
-}
-.spinning {
-  -webkit-animation: spinning 4s linear infinite;
-}
+@import "app";
+@import "view-schedule";
+@import "schedule-grid";
+@import "participants-list";
+
+@import "debug";

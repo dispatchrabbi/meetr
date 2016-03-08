@@ -113,7 +113,7 @@ const ScheduleGrid = React.createClass({
 
   render: function render() {
     return (
-      <table className="table table-bordered" onMouseDown={this.startLoggingMouseMovements} onMouseMove={this.updateMouseMovements} onMouseUp={this.clearAndReportMouseMovements}>
+      <table className="schedule-grid" onMouseDown={this.startLoggingMouseMovements} onMouseMove={this.updateMouseMovements} onMouseUp={this.clearAndReportMouseMovements}>
         <thead>
           <tr>
             <th key="origin">@</th>
@@ -123,17 +123,17 @@ const ScheduleGrid = React.createClass({
         <tbody>
           {this.props.rows.map(row => {
             return (<tr key={'row-' + row.key}>
-              <td key={'lheader-' + row.key}>{row.label}</td>
+              <th key={'lheader-' + row.key}>{row.label}</th>
               {this.props.columns.map(column => {
                 const key = 'cell-' + column.key + '-' + row.key;
                 const intersects = this.doesCellIntersectMouseRegion(key);
 
                 return (
                   <td
-                    className={ this.props.cellClassName ? this.props.cellClassName(row.key, column.key, intersects) : '' }
+                    className={ this.props.cellClassName ? this.props.cellClassName(row.value, column.value, intersects) : '' }
                     key={key}
                     ref={(el) => { this.registerCellRect(key, row.key, column.key, el); }}
-                  >{ this.props.cellValue ? this.props.cellValue(row.key, column.key, intersects) : '' }</td>
+                  >{ this.props.cellValue ? this.props.cellValue(row.value, column.value, intersects) : '' }</td>
                 );
               })}
             </tr>);

@@ -10,9 +10,9 @@ const ParticipantsList = React.createClass({
 
   render: function render() {
     return (
-      <ul className="list-group">
+      <ul className="participants-list">
         { this.props.participants.map((participant, ix) => {
-          return (<li onClick={() => this.props.onParticipantVisibilityChange(participant)} key={participant._id} className={'list-group-item' + (ix % 2 ? ' list-group-item-warning' : '')}>
+          return (<li onClick={() => this.props.onParticipantVisibilityChange(participant)} key={participant._id} className={(ix % 2 ? 'stripe' : '')}>
             <span className="participant-name">{participant.name}</span>
           </li>);
         }) }

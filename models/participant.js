@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const wrapMpromise = require('../lib/wrap-mpromise.js');
 const hash = require('../lib/hash.js');
 
-const AVAILABILITIES = ['busy', 'free', 'if-need-be'];
+const AVAILABILITIES = ['busy', 'free', 'ifneedbe'];
 
 const Participant = new mongoose.Schema({
   name: { type: String, index: true }, // The name of the participant

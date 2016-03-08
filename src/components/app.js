@@ -13,18 +13,17 @@ const App = React.createClass({
 
   render: function render() {
     return (
-      <div className="container">
-        <div className="row">
-          <div className="page-header col-md-12 col-xs-12">
-            <h1>
-              <span onClick={this.props.onHeaderClick}>Meetr</span>
-              {' '}
-              <small>Like when2jeremy but better.</small>
-              <div style={{ float: 'right' }}><small>{this.props.userParticipant ? `Logged in as ${this.props.userParticipant.name}` : ''}</small></div>
-            </h1>
-          </div>
-        </div>
-        {this.props.children}
+      <div id="app">
+        <header>
+          <h1 onClick={this.props.onHeaderClick}>
+            Meetr
+            {' '}
+            <span className="slogan">Like when2jeremy but better.</span>
+          </h1>
+        </header>
+        <section className="content">
+          {this.props.children}
+        </section>
       </div>
     );
   },
