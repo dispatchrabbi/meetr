@@ -96,13 +96,13 @@ export const didUpdateUser = function didUpdateUser(updatedUserOrError) {
 };
 
 // updateUser
-export const updateUser = function updateUser(scheduleSlug, user, updatedAvailability) {
+export const updateUser = function updateUser(scheduleSlug, user, updatedAvailabilities) {
   return function updateUserThunk(dispatch) {
     // Let folks know we're about to update that sweet availability
     dispatch(willUpdateUser(name));
 
     // Make sure we return a promise so others can play off the request being done too
-    return participants.saveAvailability(scheduleSlug, user, updatedAvailability)
+    return participants.saveAvailability(scheduleSlug, user, updatedAvailabilities)
       .then(function dispatchDidUpdateUser(updatedUser) {
         dispatch(didUpdateUser(updatedUser));
         return updatedUser;

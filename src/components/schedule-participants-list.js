@@ -5,6 +5,7 @@ import ParticipantsList from './participants-list.js';
 const mapStateToProps = function mapStateToProps(state) {
   return {
     participants: state.participants,
+    userParticipant: state.userParticipant,
   };
 };
 

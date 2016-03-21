@@ -15,12 +15,19 @@ import {
   userParticipant,
 } from './participants.js';
 
+import {
+  isEditingSchedule,
+  availabilityMode,
+} from './editing.js';
+
 export default {
   isCreatingSchedule,
   scheduleCreationError,
   isLoadingSchedule,
   scheduleLoadError,
   schedule,
+  isEditingSchedule,
+  availabilityMode,
   isLoadingParticipants,
   participantsLoadError,
   participants,

@@ -3,15 +3,18 @@ import { connect } from 'react-redux';
 import { loadSchedule } from '../actions/schedule.js';
 import { loadParticipants, logInUser } from '../actions/participants.js';
 
-import ScheduleParticipantsList from './schedule-participants-list.js';
+import GridHeader from './grid-header.js';
 import ShowAvailabilityGrid from './show-availability-grid.js';
 import EditAvailabilityGrid from './edit-availability-grid.js';
+
+import ScheduleParticipantsList from './schedule-participants-list.js';
 
 const ViewSchedulePage = React.createClass({
   propTypes: {
     params: PropTypes.object,
     schedule: PropTypes.object,
     participants: PropTypes.arrayOf(PropTypes.object),
+    isEditingSchedule: PropTypes.bool,
     loadScheduleBySlug: PropTypes.func,
     onLogInButtonClick: PropTypes.func,
   },
@@ -30,9 +33,9 @@ const ViewSchedulePage = React.createClass({
         <h2>{this.props.schedule ? this.props.schedule.title : '...'}</h2>
         <section id="schedule-container">
           <section className="schedule-grid-container">
-            <h3>Availability</h3>
+            <GridHeader/>
             { this.props.participants ?
-              <ShowAvailabilityGrid/> :
+              (this.props.isEditingSchedule ? <EditAvailabilityGrid/> : <ShowAvailabilityGrid/>) :
               <div></div>
             }
           </section>
@@ -59,6 +62,7 @@ const mapStateToProps = function mapStateToProps(state) {
   return {
     schedule: state.schedule,
     participants: state.participants,
+    isEditingSchedule: state.isEditingSchedule,
   };
 };
 

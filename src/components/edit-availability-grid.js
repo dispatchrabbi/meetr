@@ -5,13 +5,20 @@ import {
   get15MinuteIncrements,
   showLabel,
   formatTime,
-} from '../lib/schedule-grid-helpers.js';
+} from '../lib/schedule-grid-helpers';
+import { updateUser } from '../actions/participants';
+
+const availabilityModes = {
+  free: { symbol: '✓', className: 'free' },
+  ifneedbe: { symbol: '?', className: 'ifneedbe' },
+  busy: { symbol: '✕', className: 'busy' },
+};
 
 // TODO: Add timezone support
 const mapStateToProps = function mapStateToProps(state) {
   // TODO: Allow for definite schedules
   const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day }; });
-  const times = get15MinuteIncrements().map((time, ix) => {
+  const times = get15MinuteIncrements(state.schedule.startTime, state.schedule.endTime).map((time, ix) => {
     return {
       key: 't' + time,
       label: showLabel(time, ix === 0) ? formatTime(time) : '',
@@ -23,14 +30,14 @@ const mapStateToProps = function mapStateToProps(state) {
   if (state.userParticipant) {
     cellValue = function cellValueUser(rowValue, colValue, intersects) {
       if (intersects) {
-        return '✓';
+        return availabilityModes[state.availabilityMode].symbol;
       }
 
       const availability = _.find(state.userParticipant.availabilities, {
         day: rowValue,
         time: colValue,
       });
-      return availability ? availability.availability : '✕';
+      return availability ? availability.availability : availabilityModes.busy.symbol;
     };
   }
 
@@ -38,14 +45,14 @@ const mapStateToProps = function mapStateToProps(state) {
   if (state.userParticipant) {
     cellClassName = function cellClassNameUser(rowValue, colValue, intersects) {
       if (intersects) {
-        return 'free';
+        return availabilityModes[state.availabilityMode].className;
       }
 
       const availability = _.find(state.userParticipant.availabilities, {
         day: rowValue,
         time: colValue,
       });
-      return availability ? availability.availability : 'busy';
+      return availability ? availability.availability : availabilityModes.busy.className;
     };
   }
 
@@ -55,20 +62,67 @@ const mapStateToProps = function mapStateToProps(state) {
 
     cellValue,
     cellClassName,
+
+    schedule: state.schedule,
+    userParticipant: state.userParticipant,
+    availabilityMode: state.availabilityMode,
   };
 };
 
 const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    onSelectCells: function onSelectCells(cells) {
+    updateAvailabilitiesFromCells: function updateAvailabilitiesFromCells(cells, schedule, userParticipant, availabilityMode) {
+      // FIXME: How can I get userParticipant, scheduleSlug, and availabilityMode from the state (instead of ownProps)?
       console.log('onSelectCells called', cells);
+
+      const newAvailabilities = cells.map(function convertCellToAvailability(cell) {
+        return {
+          day: cell.colKey,
+          time: cell.rowKey.substr(1), // take off the 't' at the beginning
+          availability: availabilityMode,
+        };
+      });
+
+      const updatedAvailabilities = newAvailabilities.reduce(function mergeAvailabilities(availabilities, eachAvailability) {
+        const availabilityToUpdate = _.find(availabilities, { day: eachAvailability.day, time: eachAvailability.time });
+        if (availabilityToUpdate) {
+          availabilityToUpdate.availability = eachAvailability.availability;
+        } else {
+          availabilities.push(eachAvailability);
+        }
+
+        return availabilities;
+      }, [].concat(userParticipant.availabilities));
+
+      console.log('updatedAvailabilities', updatedAvailabilities, userParticipant, schedule, availabilityMode);
+      dispatch(updateUser(schedule.slug, userParticipant, updatedAvailabilities));
     },
   };
 };
 
+const mergeProps = function mergeProps(stateProps, dispatchProps, ownProps) {
+  return Object.assign({}, ownProps, {
+    columns: stateProps.columns,
+    rows: stateProps.rows,
+
+    cellValue: stateProps.cellValue,
+    cellClassName: stateProps.cellClassName,
+
+    onSelectCells: function onSelectCellsUpdateAvailabilities(cells) {
+      dispatchProps.updateAvailabilitiesFromCells(
+        cells,
+        stateProps.schedule,
+        stateProps.userParticipant,
+        stateProps.availabilityMode
+      );
+    },
+  });
+};
+
 const EditAvailabilityGrid = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  mergeProps
 )(ScheduleGrid);
 
 export default EditAvailabilityGrid;

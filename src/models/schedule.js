@@ -28,6 +28,7 @@ const create = function create(scheduleData) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(scheduleData),
+    credentials: 'include',
   };
 
   return fetch(URL, OPTIONS)
