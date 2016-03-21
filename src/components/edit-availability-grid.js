@@ -17,7 +17,7 @@ const availabilityModes = {
 // TODO: Add timezone support
 const mapStateToProps = function mapStateToProps(state) {
   // TODO: Allow for definite schedules
-  const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day }; });
+  const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
   const times = get15MinuteIncrements(state.schedule.startTime, state.schedule.endTime).map((time, ix) => {
     return {
       key: 't' + time,
@@ -26,33 +26,35 @@ const mapStateToProps = function mapStateToProps(state) {
     };
   });
 
+  const userParticipant = state.currentUser && _.find(state.participants, { _id: state.currentUser });
+
   let cellValue = function cellValueNoOp() { return '-'; };
-  if (state.userParticipant) {
+  if (userParticipant) {
     cellValue = function cellValueUser(rowValue, colValue, intersects) {
       if (intersects) {
         return availabilityModes[state.availabilityMode].symbol;
       }
 
-      const availability = _.find(state.userParticipant.availabilities, {
-        day: rowValue,
-        time: colValue,
+      const availability = _.find(userParticipant.availabilities, {
+        day: colValue,
+        time: rowValue,
       });
-      return availability ? availability.availability : availabilityModes.busy.symbol;
+      return availability ? availabilityModes[availability.availability].symbol : availabilityModes.busy.symbol;
     };
   }
 
   let cellClassName = function cellClassNoOp() { return ''; };
-  if (state.userParticipant) {
+  if (userParticipant) {
     cellClassName = function cellClassNameUser(rowValue, colValue, intersects) {
       if (intersects) {
         return availabilityModes[state.availabilityMode].className;
       }
 
-      const availability = _.find(state.userParticipant.availabilities, {
-        day: rowValue,
-        time: colValue,
+      const availability = _.find(userParticipant.availabilities, {
+        day: colValue,
+        time: rowValue,
       });
-      return availability ? availability.availability : availabilityModes.busy.className;
+      return availability ? availabilityModes[availability.availability].className : availabilityModes.busy.className;
     };
   }
 
@@ -63,22 +65,18 @@ const mapStateToProps = function mapStateToProps(state) {
     cellValue,
     cellClassName,
 
-    schedule: state.schedule,
-    userParticipant: state.userParticipant,
+    userParticipant,
     availabilityMode: state.availabilityMode,
   };
 };
 
 const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    updateAvailabilitiesFromCells: function updateAvailabilitiesFromCells(cells, schedule, userParticipant, availabilityMode) {
-      // FIXME: How can I get userParticipant, scheduleSlug, and availabilityMode from the state (instead of ownProps)?
-      console.log('onSelectCells called', cells);
-
+    updateAvailabilitiesFromCells: function updateAvailabilitiesFromCells(cells, userParticipant, availabilityMode) {
       const newAvailabilities = cells.map(function convertCellToAvailability(cell) {
         return {
           day: cell.colKey,
-          time: cell.rowKey.substr(1), // take off the 't' at the beginning
+          time: +(cell.rowKey.substr(1)), // take off the 't' at the beginning, then convert to a number
           availability: availabilityMode,
         };
       });
@@ -93,9 +91,9 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
         return availabilities;
       }, [].concat(userParticipant.availabilities));
+      // TODO: Sort the availabilities for convenience's sake?
 
-      console.log('updatedAvailabilities', updatedAvailabilities, userParticipant, schedule, availabilityMode);
-      dispatch(updateUser(schedule.slug, userParticipant, updatedAvailabilities));
+      dispatch(updateUser(userParticipant._id, updatedAvailabilities));
     },
   };
 };
@@ -111,7 +109,6 @@ const mergeProps = function mergeProps(stateProps, dispatchProps, ownProps) {
     onSelectCells: function onSelectCellsUpdateAvailabilities(cells) {
       dispatchProps.updateAvailabilitiesFromCells(
         cells,
-        stateProps.schedule,
         stateProps.userParticipant,
         stateProps.availabilityMode
       );

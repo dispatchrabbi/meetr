@@ -7,7 +7,7 @@ import { push } from 'react-router-redux';
 const App = React.createClass({
   propTypes: {
     children: PropTypes.node,
-    userParticipant: PropTypes.object,
+    currentUser: PropTypes.string,
     onHeaderClick: PropTypes.func,
   },
 
@@ -31,7 +31,7 @@ const App = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    userParticipant: state.userParticipant,
+    currentUser: state.currentUser,
   };
 };
 

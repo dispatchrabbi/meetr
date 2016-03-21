@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import ParticipantsList from './participants-list.js';
@@ -5,16 +6,14 @@ import ParticipantsList from './participants-list.js';
 const mapStateToProps = function mapStateToProps(state) {
   return {
     participants: state.participants,
-    userParticipant: state.userParticipant,
+    currentUser: state.currentUser,
   };
 };
 
 const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    onParticipantVisibilityChange: function onParticipantVisibilityChangeLog(participant) {
-      console.log(`Visibility changed for ${participant.name}.`);
-    },
-    onParticipantImportanceChange: null,
+    onParticipantVisibilityChange: _.noop,
+    onParticipantImportanceChange: _.noop,
   };
 };
 

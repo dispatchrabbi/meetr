@@ -24,9 +24,8 @@ const logIn = function logIn(slug, name, password) {
     .catch(handlers.throwGenericError);
 };
 
-const saveAvailability = function saveAvailability(slug, userParticipant, availabilities) {
-  // const URL = CONFIG.apiPath + '/schedules/' + slug + '/participants/' + userParticipant._id;
-  const URL = CONFIG.apiPath + '/participants/' + userParticipant._id;
+const saveAvailability = function saveAvailability(userId, availabilities) {
+  const URL = CONFIG.apiPath + '/participants/' + userId;
   const OPTIONS = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

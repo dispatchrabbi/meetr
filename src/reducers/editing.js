@@ -4,7 +4,7 @@ import {
 } from '../actions/editing.js';
 import { UNLOAD_SCHEDULE } from '../actions/schedule.js';
 
-export const isEditingSchedule = function isEditingSchedule(state = true, action) {
+export const isEditingSchedule = function isEditingSchedule(state = false, action) {
   switch (action.type) {
     case SET_EDITING_SCHEDULE:
       return action.payload;

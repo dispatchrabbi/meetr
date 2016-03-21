@@ -23,7 +23,7 @@ const tallyAvailabilities = function tallyAvailabilities(participants, day, time
 // TODO: Add timezone support
 const mapStateToProps = function mapStateToProps(state) {
   // TODO: Allow for definite schedules
-  const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day }; });
+  const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
   const times = get15MinuteIncrements(state.schedule.startTime, state.schedule.endTime).map((time, ix) => {
     return {
       key: 't' + time,

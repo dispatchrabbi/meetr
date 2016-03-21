@@ -25,19 +25,18 @@ const ViewSchedulePage = React.createClass({
     }
   },
 
-  // TODO: Do I need this in componentWillReceiveProps also?
-
   render: function render() {
+    const scheduleGridContainerContents = this.props.participants ? [
+      <GridHeader/>,
+      this.props.isEditingSchedule ? <EditAvailabilityGrid/> : <ShowAvailabilityGrid/>,
+    ] : '';
+
     return (
       <div>
         <h2>{this.props.schedule ? this.props.schedule.title : '...'}</h2>
         <section id="schedule-container">
           <section className="schedule-grid-container">
-            <GridHeader/>
-            { this.props.participants ?
-              (this.props.isEditingSchedule ? <EditAvailabilityGrid/> : <ShowAvailabilityGrid/>) :
-              <div></div>
-            }
+            {scheduleGridContainerContents}
           </section>
           <section className="participants-list-container">
             <h3>Participants</h3>
