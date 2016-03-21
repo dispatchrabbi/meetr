@@ -2,15 +2,24 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const bourbon = require('bourbon');
+const bourbonNeat = require('bourbon-neat');
+
+// Sass Options
+const SASS_OPTIONS = {
+  includePaths: [].concat(bourbon.includePaths, bourbonNeat.includePaths),
+};
+
 // TODO: Make a development version and a production version
 module.exports = {
+  debug: true,
   context: __dirname + '/src',
   entry: [
     'webpack-hot-middleware/client', // this module connects to the server to effect hot reloading
     './index',
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'public'),
     filename: 'bundle.js',
     publicPath: '/',
   },
@@ -43,23 +52,16 @@ module.exports = {
       // Style/CSS loader
       {
         test: /\.css$/,
-        loader: 'style!css',
+        loader: ['style', 'css'],
       },
 
-      // Bootstrap loader
-      // **IMPORTANT** This is needed so that each bootstrap js file required by
-      // bootstrap-webpack has access to the jQuery object
-      { test: /bootstrap\/dist\/js\//, loader: 'imports?jQuery=jquery' },
-
-      // Needed for the css-loader when [bootstrap-webpack](https://github.com/bline/bootstrap-webpack)
-      // loads bootstrap's css.
-      /* eslint-disable no-multi-spaces */
-      { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,   loader: 'url?limit=10000&minetype=application/font-woff' },
-      { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,  loader: 'url?limit=10000&minetype=application/font-woff2' },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,    loader: 'url?limit=10000&minetype=application/octet-stream' },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,    loader: 'file' },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,    loader: 'url?limit=10000&minetype=image/svg+xml' },
-      /* eslint-enable no-multi-spaces */
+      // Sass loader
+      {
+        test: /\.scss$/,
+        loaders: ['style', 'css?sourceMap', 'sass?sourceMap'],
+      },
     ],
   },
+
+  sassLoader: SASS_OPTIONS,
 };

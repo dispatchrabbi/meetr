@@ -30,7 +30,7 @@ dbConnect.connect(mongoose, CONFIG.db.address, CONFIG.db.name)
       secret: CONFIG.session.secret,
       store: new MongoStore({ mongooseConnection: dbConnection }),
       cookie: { secure: 'auto' }, // secure cookies when accessed by HTTPS; non-secure cookies when accessed by HTTP
-      resave: false, // don't save the session if we didn't modify it at all
+      resave: true, // always save the session, because MongoStore can't tell if it got modified
       saveUninitialized: false, // don't save a new session unless we modified it somehow
       // unset: 'destroy', // remove the session from the store if req.session is deleted/set to null
     }));

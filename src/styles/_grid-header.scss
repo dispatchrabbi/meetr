@@ -1,0 +1,35 @@
+.grid-header {
+
+  h3 {
+    @include span-columns(2 of 9);
+  }
+
+  .mode-button-container {
+    @include span-columns(7 of 9);
+    @include omega();
+
+    text-align: right;
+
+    button {
+      margin-left: $small-spacing;
+      background-color: $secondary-background-color;
+
+      &.edit     { color: $action-color; }
+
+      &.free     { color: $free-color; }
+      &.ifneedbe { color: $ifneedbe-color; }
+      &.busy     { color: $busy-color2; }
+
+      &.selected {
+        color: white;
+
+        &.edit     { background-color: $action-color; }
+
+        &.free     { background-color: $free-color; }
+        &.ifneedbe { background-color: $ifneedbe-color; }
+        &.busy     { background-color: $busy-color2; }
+      }
+    }
+  }
+
+}

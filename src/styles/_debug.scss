@@ -1,0 +1,22 @@
+$visual-grid: true;
+$visual-grid-index: front;
+
+.debug {
+  pre {
+    font-size: modular-scale(-1);
+    white-space: pre-wrap;
+    background-color: $secondary-background-color;
+    padding: .5em;
+    border-radius: .5em;
+    border: $base-border;
+  }
+}
+
+.debug-buttons {
+  @include row();
+
+  .debug-button-cell {
+    text-align: center;
+    @include span-columns(3);
+  }
+}

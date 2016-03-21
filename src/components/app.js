@@ -7,22 +7,23 @@ import { push } from 'react-router-redux';
 const App = React.createClass({
   propTypes: {
     children: PropTypes.node,
-    userParticipant: PropTypes.object,
+    currentUser: PropTypes.string,
     onHeaderClick: PropTypes.func,
   },
 
   render: function render() {
     return (
-      <div className="container">
-        <div className="page-header row">
-          <h1>
-            <span onClick={this.props.onHeaderClick}>Meetr</span>
+      <div id="app">
+        <header>
+          <h1 onClick={this.props.onHeaderClick}>
+            Meetr
             {' '}
-            <small>Like when2jeremy but better.</small>
-            <div style={{ float: 'right' }}><small>{this.props.userParticipant ? `Logged in as ${this.props.userParticipant.name}` : ''}</small></div>
+            <span className="slogan">Like when2jeremy but better.</span>
           </h1>
-        </div>
-        {this.props.children}
+        </header>
+        <section className="content">
+          {this.props.children}
+        </section>
       </div>
     );
   },
@@ -30,7 +31,7 @@ const App = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    userParticipant: state.userParticipant,
+    currentUser: state.currentUser,
   };
 };
 

@@ -12,25 +12,25 @@ const CreateSchedulePage = React.createClass({
 
   buildFakeClickArgument: function buildFakeClickArgument() {
     return {
-      title: 'Fake Click',
+      title: 'Test Schedule',
       definite: false,
       days: [
         'Tuesday',
         'Thursday',
         'Friday',
       ],
-      startTime: 3600,
-      endTime: 7200,
-      timezone: 'America/Baltimore',
+      startTime: 39600,
+      endTime: 57600,
+      timezone: 'America/Chicago',
     };
   },
 
   render: function render() {
     return (
-      <div className="row">
-        <h3>Create Schedule Page</h3>
-        <button type="button" onClick={() => { this.props.onFakeButtonClick(this.buildFakeClickArgument()); }} className="btn btn-default">
-          Fake button!
+      <div>
+        <h2>Create Schedule Page</h2>
+        <button type="button" onClick={() => { this.props.onFakeButtonClick(this.buildFakeClickArgument()); }}>
+          Create a fake schedule!
         </button>
       </div>
     );

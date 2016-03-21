@@ -2,13 +2,19 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { loadSchedule } from '../actions/schedule.js';
 import { loadParticipants, logInUser } from '../actions/participants.js';
-import LogScheduleGrid from './log-schedule-grid.js';
+
+import GridHeader from './grid-header.js';
+import ShowAvailabilityGrid from './show-availability-grid.js';
+import EditAvailabilityGrid from './edit-availability-grid.js';
+
+import ScheduleParticipantsList from './schedule-participants-list.js';
 
 const ViewSchedulePage = React.createClass({
   propTypes: {
     params: PropTypes.object,
     schedule: PropTypes.object,
     participants: PropTypes.arrayOf(PropTypes.object),
+    isEditingSchedule: PropTypes.bool,
     loadScheduleBySlug: PropTypes.func,
     onLogInButtonClick: PropTypes.func,
   },
@@ -19,24 +25,33 @@ const ViewSchedulePage = React.createClass({
     }
   },
 
-  // TODO: Do I need this in componentWillReceiveProps also?
-
   render: function render() {
+    const scheduleGridContainerContents = this.props.participants ? [
+      <GridHeader/>,
+      this.props.isEditingSchedule ? <EditAvailabilityGrid/> : <ShowAvailabilityGrid/>,
+    ] : '';
+
     return (
       <div>
-        <div className="row">
-          <h3>View Schedule Page ({this.props.params.slug})</h3>
+        <h2>{this.props.schedule ? this.props.schedule.title : '...'}</h2>
+        <section id="schedule-container">
+          <section className="schedule-grid-container">
+            {scheduleGridContainerContents}
+          </section>
+          <section className="participants-list-container">
+            <h3>Participants</h3>
+            { this.props.participants ? <ScheduleParticipantsList/> : <div></div> }
+          </section>
+        </section>
+        <section className="debug">
           <pre>{JSON.stringify(this.props.schedule)}</pre>
           <pre>{JSON.stringify(this.props.participants)}</pre>
-        </div>
-        <div className="row">
-          <LogScheduleGrid/>
-        </div>
-        <div className="row">
-          { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
-            return <div className="col-md-3" key={name}><button type="button" className="btn btn-default" onClick={() => { this.props.onLogInButtonClick(this.props.schedule.slug, name, 'Password' + ix); }}>Log in as {name} (Password{ix})</button></div>;
-          }) }
-        </div>
+        </section>
+        <section className="debug-buttons">
+        { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
+          return <div className="debug-button-cell" key={name}><button type="button" onClick={() => { this.props.onLogInButtonClick(this.props.schedule.slug, name, 'Password' + ix); }}>Log in as {name} (Password{ix})</button></div>;
+        }) }
+        </section>
       </div>
     );
   },
@@ -46,6 +61,7 @@ const mapStateToProps = function mapStateToProps(state) {
   return {
     schedule: state.schedule,
     participants: state.participants,
+    isEditingSchedule: state.isEditingSchedule,
   };
 };
 

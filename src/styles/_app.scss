@@ -1,0 +1,21 @@
+#app {
+
+  header {
+    padding: 2em 1em .5em;
+    background-color: $secondary-background-color;
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    .slogan {
+      font-size: modular-scale(-2);
+      font-weight: normal;
+    }
+  }
+
+  .content {
+    padding: 1em;
+  }
+
+}

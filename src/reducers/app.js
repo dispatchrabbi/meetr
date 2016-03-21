@@ -12,19 +12,29 @@ import {
   participants,
   isLoggingIn,
   loginError,
-  userParticipant,
+  currentUser,
 } from './participants.js';
 
+import {
+  isEditingSchedule,
+  availabilityMode,
+} from './editing.js';
+
 export default {
+  schedule,
   isCreatingSchedule,
   scheduleCreationError,
   isLoadingSchedule,
   scheduleLoadError,
-  schedule,
+
+  participants,
   isLoadingParticipants,
   participantsLoadError,
-  participants,
+
+  currentUser,
   isLoggingIn,
   loginError,
-  userParticipant,
+
+  isEditingSchedule,
+  availabilityMode,
 };

@@ -16,6 +16,7 @@ const logIn = function logIn(slug, name, password) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, password }),
+    credentials: 'include',
   };
 
   return fetch(URL, OPTIONS)
@@ -23,12 +24,13 @@ const logIn = function logIn(slug, name, password) {
     .catch(handlers.throwGenericError);
 };
 
-const saveAvailability = function saveAvailability(slug, userParticipant, availability) {
-  const URL = CONFIG.apiPath + '/schedules/' + slug + '/participants/' + userParticipant.id;
+const saveAvailability = function saveAvailability(userId, availabilities) {
+  const URL = CONFIG.apiPath + '/participants/' + userId;
   const OPTIONS = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ availability }),
+    body: JSON.stringify({ availabilities }),
+    credentials: 'include',
   };
 
   return fetch(URL, OPTIONS)

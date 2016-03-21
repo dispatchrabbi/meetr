@@ -21,7 +21,7 @@ const LogScheduleGrid = connect(
         return intersects ? '✓' : '✕';
       },
       cellClassName: function cellValue(rowKey, colKey, intersects) {
-        return intersects ? 'success' : 'danger';
+        return intersects ? 'free' : 'busy';
       },
 
       onSelectCells: function onSelectCells(cells) {
