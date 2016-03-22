@@ -1,4 +1,8 @@
 import {
+  routing,
+} from './routing.js';
+
+import {
   isCreatingSchedule,
   scheduleCreationError,
   isLoadingSchedule,
@@ -20,7 +24,11 @@ import {
   availabilityMode,
 } from './editing.js';
 
+// TODO: rewrite the reducers to affect the state as a whole based on action, rather than each portion of the state
+// (or maybe split up the state into smaller portions, but don't do every property inidividually?)
 export default {
+  routing,
+
   schedule,
   isCreatingSchedule,
   scheduleCreationError,

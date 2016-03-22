@@ -6,8 +6,8 @@ const SUBMIT_TEXT = 'bamf!';
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    isSubmitting: state.isCreatingSchedule,
-    submitError: state.scheduleCreationError,
+    isSubmitting: state.get('isCreatingSchedule'),
+    submitError: state.get('scheduleCreationError'),
   };
 };
 

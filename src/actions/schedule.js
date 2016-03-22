@@ -1,3 +1,4 @@
+import Immutable from 'immutable';
 import schedule from '../models/schedule.js';
 
 // willCreateSchedule
@@ -14,7 +15,7 @@ export const DID_CREATE_SCHEDULE = 'DID_CREATE_SCHEDULE';
 export const didCreateSchedule = function didCreateSchedule(createdScheduleOrError) {
   return {
     type: DID_CREATE_SCHEDULE,
-    payload: createdScheduleOrError,
+    payload: Immutable.fromJS(createdScheduleOrError),
     error: createdScheduleOrError instanceof Error,
   };
 };
@@ -65,7 +66,7 @@ export const DID_LOAD_SCHEDULE = 'DID_LOAD_SCHEDULE';
 export const didLoadSchedule = function didLoadSchedule(loadedScheduleOrError) {
   return {
     type: DID_LOAD_SCHEDULE,
-    payload: loadedScheduleOrError,
+    payload: Immutable.fromJS(loadedScheduleOrError),
     error: loadedScheduleOrError instanceof Error,
   };
 };

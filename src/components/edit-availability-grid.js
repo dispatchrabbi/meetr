@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import ScheduleGrid from './schedule-grid';
 import {
@@ -8,17 +8,24 @@ import {
 } from '../lib/schedule-grid-helpers';
 import { updateUser } from '../actions/participants';
 
+// TODO: Refactor this out to a more-useful const somewhere else
 const availabilityModes = {
   free: { symbol: '✓', className: 'free' },
   ifneedbe: { symbol: '?', className: 'ifneedbe' },
   busy: { symbol: '✕', className: 'busy' },
 };
 
+const findAvailability = function findAvailability(availabilities, day, time) {
+  return availabilities.find(a => a.get('day') === day && a.get('time') === time);
+};
+
 // TODO: Add timezone support
 const mapStateToProps = function mapStateToProps(state) {
+  const schedule = state.get('schedule').toJS();
+
   // TODO: Allow for definite schedules
-  const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
-  const times = get15MinuteIncrements(state.schedule.startTime, state.schedule.endTime).map((time, ix) => {
+  const days = schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
+  const times = get15MinuteIncrements(schedule.startTime, schedule.endTime).map((time, ix) => {
     return {
       key: 't' + time,
       label: showLabel(time, ix === 0) ? formatTime(time) : '',
@@ -26,20 +33,19 @@ const mapStateToProps = function mapStateToProps(state) {
     };
   });
 
-  const userParticipant = state.currentUser && _.find(state.participants, { _id: state.currentUser });
+  const userParticipant = state.get('participants').find(participant => participant.get('_id') === state.get('currentUser'));
+  const availabilityMode = state.get('availabilityMode');
 
   let cellValue = function cellValueNoOp() { return '-'; };
+  // FIXME: remove this guard once all the mode switches are working
   if (userParticipant) {
     cellValue = function cellValueUser(rowValue, colValue, intersects) {
       if (intersects) {
-        return availabilityModes[state.availabilityMode].symbol;
+        return availabilityModes[availabilityMode].symbol;
       }
 
-      const availability = _.find(userParticipant.availabilities, {
-        day: colValue,
-        time: rowValue,
-      });
-      return availability ? availabilityModes[availability.availability].symbol : availabilityModes.busy.symbol;
+      const availability = findAvailability(userParticipant.get('availabilities'), colValue, rowValue);
+      return availability ? availabilityModes[availability.get('availability')].symbol : availabilityModes.busy.symbol;
     };
   }
 
@@ -47,14 +53,11 @@ const mapStateToProps = function mapStateToProps(state) {
   if (userParticipant) {
     cellClassName = function cellClassNameUser(rowValue, colValue, intersects) {
       if (intersects) {
-        return availabilityModes[state.availabilityMode].className;
+        return availabilityModes[availabilityMode].className;
       }
 
-      const availability = _.find(userParticipant.availabilities, {
-        day: colValue,
-        time: rowValue,
-      });
-      return availability ? availabilityModes[availability.availability].className : availabilityModes.busy.className;
+      const availability = findAvailability(userParticipant.get('availabilities'), colValue, rowValue);
+      return availability ? availabilityModes[availability.get('availability')].className : availabilityModes.busy.className;
     };
   }
 
@@ -66,7 +69,7 @@ const mapStateToProps = function mapStateToProps(state) {
     cellClassName,
 
     userParticipant,
-    availabilityMode: state.availabilityMode,
+    availabilityMode: state.get('availabilityMode'),
   };
 };
 
@@ -81,19 +84,14 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
         };
       });
 
-      const updatedAvailabilities = newAvailabilities.reduce(function mergeAvailabilities(availabilities, eachAvailability) {
-        const availabilityToUpdate = _.find(availabilities, { day: eachAvailability.day, time: eachAvailability.time });
-        if (availabilityToUpdate) {
-          availabilityToUpdate.availability = eachAvailability.availability;
-        } else {
-          availabilities.push(eachAvailability);
-        }
-
-        return availabilities;
-      }, [].concat(userParticipant.availabilities));
+      const updatedAvailabilities = newAvailabilities.reduce(function mergeAvailabilities(availabilities, newAvailability) {
+        return availabilities
+          .filterNot(a => a.get('day') === newAvailability.day && a.get('time') === newAvailability.time)
+          .push(Immutable.fromJS(newAvailability));
+      }, userParticipant.get('availabilities'));
       // TODO: Sort the availabilities for convenience's sake?
 
-      dispatch(updateUser(userParticipant._id, updatedAvailabilities));
+      dispatch(updateUser(userParticipant.get('_id'), updatedAvailabilities.toJS()));
     },
   };
 };

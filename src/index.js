@@ -4,7 +4,10 @@
 import MAIN_CSS from './styles/index.scss';
 /* eslint-enable no-unused-vars */
 
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import Immutable from 'immutable';
+
+import { createStore, applyMiddleware, compose } from 'redux';
+import { combineReducers } from 'redux-immutablejs';
 import thunkMiddleware from 'redux-thunk';
 
 import React from 'react';
@@ -13,19 +16,19 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
-import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
+import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 
 import reducers from './reducers/app.js';
 import App from './components/app.js';
 import CreateSchedulePage from './components/create-schedule-page.js';
 import ViewSchedulePage from './components/view-schedule-page.js';
 
-const appReducerWithRouting = combineReducers(Object.assign({}, reducers, {
-  routing: routerReducer,
-}));
+const appReducer = combineReducers(reducers);
+const INITIAL_STATE = appReducer(Immutable.fromJS({}), { type: undefined });
 
 const store = createStore(
-  appReducerWithRouting,
+  appReducer,
+  INITIAL_STATE,
   compose(
     applyMiddleware(
       routerMiddleware(browserHistory), // let us use history-related action creators
@@ -35,7 +38,9 @@ const store = createStore(
     window.devToolsExtension ? window.devToolsExtension() : noop => noop
   )
 );
-const history = syncHistoryWithStore(browserHistory, store);
+const history = syncHistoryWithStore(browserHistory, store, {
+  selectLocationState: (state) => { return state.get('routing').toJS(); },
+});
 
 ReactDOM.render(
   <Provider store={store}>

@@ -1,3 +1,4 @@
+import Immutable from 'immutable';
 import participants from '../models/participants.js';
 
 // willLoadParticipants
@@ -14,7 +15,7 @@ export const DID_LOAD_PARTICIPANTS = 'DID_LOAD_PARTICIPANTS';
 export const didLoadParticipants = function didLoadParticipants(loadedParticipantsOrError) {
   return {
     type: DID_LOAD_PARTICIPANTS,
-    payload: loadedParticipantsOrError,
+    payload: Immutable.fromJS(loadedParticipantsOrError),
     error: loadedParticipantsOrError instanceof Error,
   };
 };
@@ -52,7 +53,7 @@ export const DID_LOG_IN_USER = 'DID_LOG_IN_USER';
 export const didLogInUser = function didLogInUser(loggedInUserOrError) {
   return {
     type: DID_LOG_IN_USER,
-    payload: loggedInUserOrError,
+    payload: Immutable.fromJS(loggedInUserOrError),
     error: loggedInUserOrError instanceof Error,
   };
 };
@@ -90,7 +91,7 @@ export const DID_UPDATE_USER = 'DID_UPDATE_USER';
 export const didUpdateUser = function didUpdateUser(updatedUserOrError) {
   return {
     type: DID_UPDATE_USER,
-    payload: updatedUserOrError,
+    payload: Immutable.fromJS(updatedUserOrError),
     error: updatedUserOrError instanceof Error,
   };
 };
@@ -114,7 +115,7 @@ export const updateUser = function updateUser(userId, updatedAvailabilities) {
   };
 };
 
-// FIXME: Make this actually talk to the server instead of just being front-end
+// TODO: Make this actually talk to the server instead of just being front-end
 export const LOG_OUT_USER = 'LOG_OUT_USER';
 export const logOutUser = function logOutUser() {
   return {

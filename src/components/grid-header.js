@@ -6,7 +6,7 @@ import { setAvailability, setEditingSchedule } from '../actions/editing.js';
 const GridHeader = React.createClass({
   propTypes: {
     currentUser: PropTypes.string,
-    isEditingSchedule: PropTypes.boolean,
+    isEditingSchedule: PropTypes.bool,
     onEditSet: PropTypes.func,
 
     modes: PropTypes.arrayOf(PropTypes.object),
@@ -46,15 +46,15 @@ const GridHeader = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    currentUser: state.currentUser,
-    isEditingSchedule: state.isEditingSchedule,
+    currentUser: state.get('currentUser'),
+    isEditingSchedule: state.get('isEditingSchedule'),
 
     modes: [
       { type: 'free', label: '✓ Free' },
       { type: 'ifneedbe', label: '? If Need Be' },
       { type: 'busy', label: '✕ Busy' },
     ],
-    selectedMode: state.availabilityMode,
+    selectedMode: state.get('availabilityMode'),
   };
 };
 

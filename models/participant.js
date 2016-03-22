@@ -9,6 +9,7 @@ const Participant = new mongoose.Schema({
   hash: { type: String }, // A password (hashed) for the participant
   schedule: { type: mongoose.SchemaTypes.ObjectId, index: true }, // which schedule this participant belongs to
 
+  // TODO: consider redoing this as a nested map, with days and then times.
   availabilities: [{
     day: String, // The day this availability pertains to (either a date or a day of the week)
     time: { type: Number, min: 0, max: 86400 }, // The time this availability pertains to (as the beginning of a 15-minute span, in seconds after midnight)
