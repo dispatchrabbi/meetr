@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+
 import { connect } from 'react-redux';
 import { loadSchedule } from '../actions/schedule.js';
 import { loadParticipants, logInUser } from '../actions/participants.js';
@@ -12,28 +14,28 @@ import ScheduleParticipantsList from './schedule-participants-list.js';
 const ViewSchedulePage = React.createClass({
   propTypes: {
     params: PropTypes.object,
-    schedule: PropTypes.object,
-    participants: PropTypes.arrayOf(PropTypes.object),
+    schedule: ImmutablePropTypes.map,
+    participants: ImmutablePropTypes.listOf(ImmutablePropTypes.map),
     isEditingSchedule: PropTypes.bool,
     loadScheduleBySlug: PropTypes.func,
     onLogInButtonClick: PropTypes.func,
   },
 
   componentDidMount: function componentDidMount() {
-    if (!(this.props.schedule && this.props.schedule.slug === this.props.params.slug)) {
+    if (!(this.props.schedule && this.props.schedule.get('slug') === this.props.params.slug)) {
       this.props.loadScheduleBySlug(this.props.params.slug);
     }
   },
 
   render: function render() {
     const scheduleGridContainerContents = this.props.participants ? [
-      <GridHeader/>,
-      this.props.isEditingSchedule ? <EditAvailabilityGrid/> : <ShowAvailabilityGrid/>,
+      <GridHeader key="gh" />,
+      this.props.isEditingSchedule ? <EditAvailabilityGrid key="eag" /> : <ShowAvailabilityGrid key="sag" />,
     ] : '';
 
     return (
       <div>
-        <h2>{this.props.schedule ? this.props.schedule.title : '...'}</h2>
+        <h2>{this.props.schedule ? this.props.schedule.get('title') : '...'}</h2>
         <section id="schedule-container">
           <section className="schedule-grid-container">
             {scheduleGridContainerContents}
@@ -44,12 +46,12 @@ const ViewSchedulePage = React.createClass({
           </section>
         </section>
         <section className="debug">
-          <pre>{JSON.stringify(this.props.schedule)}</pre>
-          <pre>{JSON.stringify(this.props.participants)}</pre>
+          <pre>{JSON.stringify(this.props.schedule && this.props.schedule.toJS())}</pre>
+          <pre>{JSON.stringify(this.props.participants && this.props.participants.toJS())}</pre>
         </section>
         <section className="debug-buttons">
         { ['Quentin', 'Junko', 'Cornelia', 'Roscoe'].map((name, ix) => {
-          return <div className="debug-button-cell" key={name}><button type="button" onClick={() => { this.props.onLogInButtonClick(this.props.schedule.slug, name, 'Password' + ix); }}>Log in as {name} (Password{ix})</button></div>;
+          return <div className="debug-button-cell" key={name}><button type="button" onClick={() => { this.props.onLogInButtonClick(this.props.schedule.get('slug'), name, 'Password' + ix); }}>Log in as {name} (Password{ix})</button></div>;
         }) }
         </section>
       </div>
@@ -59,9 +61,9 @@ const ViewSchedulePage = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    schedule: state.schedule,
-    participants: state.participants,
-    isEditingSchedule: state.isEditingSchedule,
+    schedule: state.get('schedule'),
+    participants: state.get('participants'),
+    isEditingSchedule: state.get('isEditingSchedule'),
   };
 };
 

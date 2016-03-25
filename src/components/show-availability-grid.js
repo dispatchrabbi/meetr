@@ -22,9 +22,11 @@ const tallyAvailabilities = function tallyAvailabilities(participants, day, time
 
 // TODO: Add timezone support
 const mapStateToProps = function mapStateToProps(state) {
+  const schedule = state.get('schedule').toJS();
+
   // TODO: Allow for definite schedules
-  const days = state.schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
-  const times = get15MinuteIncrements(state.schedule.startTime, state.schedule.endTime).map((time, ix) => {
+  const days = schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
+  const times = get15MinuteIncrements(schedule.startTime, schedule.endTime).map((time, ix) => {
     return {
       key: 't' + time,
       label: showLabel(time, ix === 0) ? formatTime(time) : '',
@@ -33,7 +35,7 @@ const mapStateToProps = function mapStateToProps(state) {
   });
 
   const cellValue = function cellValueShowAllAvailability(rowValue, colValue) {
-    const tallies = tallyAvailabilities(state.participants, colValue, rowValue);
+    const tallies = tallyAvailabilities(state.get('participants').toJS(), colValue, rowValue);
 
     return [tallies.free, tallies.ifneedbe, tallies.busy].join(' / ');
   };

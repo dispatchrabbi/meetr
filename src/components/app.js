@@ -31,7 +31,7 @@ const App = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    currentUser: state.currentUser,
+    currentUser: state.get('currentUser'),
   };
 };
 

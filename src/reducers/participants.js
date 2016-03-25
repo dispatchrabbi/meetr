@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import {
   UNLOAD_SCHEDULE,
 } from '../actions/schedule.js';
@@ -45,10 +43,9 @@ export const participants = function participants(state = null, action) {
     case DID_LOAD_PARTICIPANTS:
       return action.error ? null : action.payload;
     case DID_UPDATE_USER:
-      console.log('DID_UPDATE_USER', state, action);
       // If the update didn't result in an error, update the appropriate participant
       if (state && !action.error) {
-        return state.map(participant => participant._id === action.payload._id ? action.payload : participant);
+        return state.map(participant => participant.get('_id') === action.payload.get('_id') ? action.payload : participant);
       }
       return state;
     default:
@@ -87,12 +84,12 @@ export const currentUser = function currentUser(state = null, action) {
       return null;
     case DID_LOAD_PARTICIPANTS:
       // Check to make sure the currentUser is in the list of participants that was just loaded (action.payload)
-      const currentUserIsInTheList = state === null || action.payload.filter(participant => participant.id === state).length === 0;
+      const currentUserIsInTheList = state === null || action.payload.some(participant => participant.get('_id') === state);
       // If so, cool; if not, log them out
       return currentUserIsInTheList ? state : null;
     case DID_LOG_IN_USER:
       // action.payload is the user that was logged in
-      return action.error ? null : action.payload._id;
+      return action.error ? null : action.payload.get('_id');
     default:
       return state;
   }
