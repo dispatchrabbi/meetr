@@ -7,7 +7,6 @@ import MAIN_CSS from './styles/index.scss';
 import Immutable from 'immutable';
 
 import { createStore, applyMiddleware, compose } from 'redux';
-import { combineReducers } from 'redux-immutablejs';
 import thunkMiddleware from 'redux-thunk';
 
 import React from 'react';
@@ -18,12 +17,11 @@ import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 
-import reducers from './reducers/app.js';
+import appReducer from './reducers/app.js';
 import App from './components/app.js';
 import CreateSchedulePage from './components/create-schedule-page.js';
 import ViewSchedulePage from './components/view-schedule-page.js';
 
-const appReducer = combineReducers(reducers);
 const INITIAL_STATE = appReducer(Immutable.fromJS({}), { type: undefined });
 
 const store = createStore(
