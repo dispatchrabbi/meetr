@@ -6,10 +6,13 @@
 
 @import "scale";
 
-@import "app";
-@import "view-schedule";
-@import "grid-header";
 @import "schedule-grid";
-@import "participants-list";
+
+@import "app";
+@import 'view-schedule/index';
+
+// @import "view-schedule";
+// @import "grid-header";
+// @import "participants-list";
 
 @import "debug";

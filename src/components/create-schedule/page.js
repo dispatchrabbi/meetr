@@ -28,12 +28,12 @@ export const Page = React.createClass({
 
   render: function render() {
     return (
-      <div>
+      <section className="page">
         <h2>Create Schedule Page</h2>
         <button type="button" onClick={() => { this.props.onFakeButtonClick(this.buildFakeClickArgument()); }}>
           Create a fake schedule!
         </button>
-      </div>
+      </section>
     );
   },
 });

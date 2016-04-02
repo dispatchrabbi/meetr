@@ -5,7 +5,7 @@ import {
 // TODO: import appropriate actions and refactor as appropriate
 
 const INITIAL_STATE = Immutable.fromJS({
-  isSaving: false,
+  isCreating: false,
   error: null,
   data: {},
 });

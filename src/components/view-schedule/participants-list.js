@@ -6,7 +6,7 @@ import ParticipantsList from '../participants-list.js';
 const mapStateToProps = function mapStateToProps(state) {
   return {
     participants: state.getIn(['currentSchedule', 'participants', 'list']),
-    currentUser: state.getIn(['currentUser', 'id']),
+    currentUser: state.get('currentUser'),
   };
 };
 

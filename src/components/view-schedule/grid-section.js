@@ -24,7 +24,7 @@ export const GridSection = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    isUserLoggedIn: state.getIn(['currentUser', 'id']) !== null,
+    isUserLoggedIn: state.get('currentUser') !== null,
     isEditing: state.getIn(['updating', 'isEditing']),
   };
 };
