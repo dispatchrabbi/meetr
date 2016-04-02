@@ -18,9 +18,10 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 
 import appReducer from './reducers/app.js';
+
 import App from './components/app.js';
-import CreateSchedulePage from './components/create-schedule-page.js';
-import ViewSchedulePage from './components/view-schedule-page.js';
+import CreateSchedulePage from './components/create-schedule/page.js';
+import ViewSchedulePage from './components/view-schedule/page.js';
 
 const INITIAL_STATE = appReducer(Immutable.fromJS({}), { type: undefined });
 

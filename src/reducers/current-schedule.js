@@ -19,7 +19,7 @@ const INITIAL_STATE_SCHEDULE = Immutable.fromJS({
 });
 
 export const schedule = function schedule(state = INITIAL_STATE_SCHEDULE, action) {
-  switch (action) {
+  switch (action.type) {
     case WILL_LOAD_SCHEDULE:
       return state.set('isLoading', true);
     case DID_LOAD_SCHEDULE:
@@ -41,7 +41,7 @@ const INITIAL_STATE_PARTICIPANTS = Immutable.fromJS({
 });
 
 export const participants = function participants(state = INITIAL_STATE_PARTICIPANTS, action) {
-  switch (action) {
+  switch (action.type) {
     case DID_LOAD_SCHEDULE:
     case UNLOAD_SCHEDULE:
       return INITIAL_STATE_PARTICIPANTS;

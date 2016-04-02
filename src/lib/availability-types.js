@@ -1,20 +1,20 @@
 export default {
   free: {
-    name: 'free',
+    key: 'free',
     title: 'Free',
     symbol: '✓',
     className: 'free',
   },
 
   ifneedbe: {
-    name: 'ifneedbe',
+    key: 'ifneedbe',
     title: 'If Need Be',
     symbol: '?',
     className: 'ifneedbe',
   },
 
   busy: {
-    name: 'busy',
+    key: 'busy',
     title: 'Busy',
     symbol: '✕',
     className: 'busy',

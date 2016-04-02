@@ -6,10 +6,10 @@ export const setEditingSchedule = function setEditingSchedule(isEditing) {
   };
 };
 
-export const SET_AVAILABILITY_MODE = 'SET_AVAILABILITY_MODE';
-export const setAvailability = function setAvailability(availabilityMode) {
+export const SELECT_AVAILABILITY_TYPE = 'SELECT_AVAILABILITY_TYPE';
+export const selectAvailabilityType = function selectAvailabilityType(availabilityType) {
   return {
-    type: SET_AVAILABILITY_MODE,
-    payload: availabilityMode,
+    type: SELECT_AVAILABILITY_TYPE,
+    payload: availabilityType,
   };
 };

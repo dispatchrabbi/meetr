@@ -2,7 +2,7 @@ import Immutable from 'immutable';
 
 import {
   SET_EDITING_SCHEDULE,
-  SET_AVAILABILITY_MODE,
+  SELECT_AVAILABILITY_TYPE,
 } from '../actions/editing.js';
 
 import {
@@ -24,14 +24,14 @@ const INITIAL_STATE = Immutable.fromJS({
 });
 
 export const updating = function updating(state = INITIAL_STATE, action) {
-  switch (action) {
+  switch (action.type) {
     case UNLOAD_SCHEDULE:
     case DID_LOG_IN_USER:
     case LOG_OUT_USER:
       return INITIAL_STATE;
     case SET_EDITING_SCHEDULE:
       return state.set('isEditing', action.payload);
-    case SET_AVAILABILITY_MODE:
+    case SELECT_AVAILABILITY_TYPE:
       return state.set('selectedAvailabiltyType', action.payload);
     case WILL_UPDATE_USER:
       return state.set('isUpdating', true);

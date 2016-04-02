@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
+// import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { createSchedule } from '../actions/schedule.js';
-import { loadParticipants } from '../actions/participants.js';
+import { createSchedule } from '../../actions/schedule.js';
+import { loadParticipants } from '../../actions/participants.js';
 import { push } from 'react-router-redux';
 
-const CreateSchedulePage = React.createClass({
+export const Page = React.createClass({
   propTypes: {
     onFakeButtonClick: PropTypes.func.isRequired,
   },
@@ -56,9 +57,7 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   };
 };
 
-const ConnectedCreateSchedulePage = connect(
+export default connect(
   null,
   mapDispatchToProps
-)(CreateSchedulePage);
-
-export default ConnectedCreateSchedulePage;
+)(Page);

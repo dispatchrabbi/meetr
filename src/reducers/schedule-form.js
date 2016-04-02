@@ -11,7 +11,7 @@ const INITIAL_STATE = Immutable.fromJS({
 });
 
 export const scheduleForm = function scheduleForm(state = INITIAL_STATE, action) {
-  switch (action) {
+  switch (action.type) {
     default:
       return state;
   }

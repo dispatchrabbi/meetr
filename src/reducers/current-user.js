@@ -18,7 +18,7 @@ const INITIAL_STATE = Immutable.fromJS({
 });
 
 export const currentUser = function currentUser(state = INITIAL_STATE, action) {
-  switch (action) {
+  switch (action.type) {
     case UNLOAD_SCHEDULE:
     case LOG_OUT_USER:
       return INITIAL_STATE;

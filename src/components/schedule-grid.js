@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import { intersect } from '../lib/intersect.js';
 
+// TODO: Refactor this into an actual schedule grid that knows how to interpret a schedule
+// or possible a Grid and a Schedule Grid, if the logic should be separated.
 const ScheduleGrid = React.createClass({
   propTypes: {
     columns: PropTypes.arrayOf(PropTypes.shape({

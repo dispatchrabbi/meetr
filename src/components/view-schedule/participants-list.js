@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import ParticipantsList from './participants-list.js';
+import ParticipantsList from '../participants-list.js';
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    participants: state.get('participants'),
-    currentUser: state.get('currentUser'),
+    participants: state.getIn(['currentSchedule', 'participants', 'list']),
+    currentUser: state.getIn(['currentUser', 'id']),
   };
 };
 
@@ -17,4 +17,7 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ParticipantsList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ParticipantsList);

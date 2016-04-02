@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 import { unloadSchedule } from '../actions/schedule.js';
 import { push } from 'react-router-redux';
 
-const App = React.createClass({
+export const App = React.createClass({
   propTypes: {
     children: PropTypes.node,
-    currentUser: PropTypes.string,
     onHeaderClick: PropTypes.func,
   },
 
@@ -29,12 +28,6 @@ const App = React.createClass({
   },
 });
 
-const mapStateToProps = function mapStateToProps(state) {
-  return {
-    currentUser: state.get('currentUser'),
-  };
-};
-
 const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
     onHeaderClick: function onHeaderClickUnloadSchedule() {
@@ -49,9 +42,7 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
   };
 };
 
-const ConnectedApp = connect(
-  mapStateToProps,
+export default connect(
+  null,
   mapDispatchToProps
 )(App);
-
-export default ConnectedApp;
