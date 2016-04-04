@@ -17,11 +17,12 @@ import {
 } from '../actions/login-form.js';
 
 const INITIAL_STATE = Immutable.fromJS({
+  fields: {
+    name: '',
+    password: '',
+  },
+
   isVisible: false,
-
-  name: '',
-  password: '',
-
   isLoggingIn: false,
   error: null,
 });
@@ -33,8 +34,8 @@ export const loginForm = function loginForm(state = INITIAL_STATE, action) {
     case HIDE_LOGIN_FORM:
       return state.set('isVisible', false);
     case UPDATE_LOGIN_FORM:
-      return state
-        .set(action.payload.field, action.payload.newValue);
+      const newFields = state.get('fields').set(action.payload.field, action.payload.newValue);
+      return state.set('fields', newFields);
     case WILL_LOG_IN_USER:
       return state.set('isLoggingIn', true);
     case DID_LOG_IN_USER:

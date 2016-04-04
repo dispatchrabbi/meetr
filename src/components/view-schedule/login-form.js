@@ -34,8 +34,8 @@ export const LoginForm = React.createClass({
 
 const mapStateToProps = function mapStateToProps(state) {
   return {
-    name: state.getIn(['loginForm', 'name']),
-    password: state.getIn(['loginForm', 'password']),
+    name: state.getIn(['loginForm', 'fields', 'name']),
+    password: state.getIn(['loginForm', 'fields', 'password']),
 
     isLoggingIn: state.getIn(['loginForm', 'isLoggingIn']),
     error: state.getIn(['loginForm', 'error']),
