@@ -32,7 +32,7 @@ export const EditingToolbar = React.createClass({
           this.props.modes.map(mode => (
               <button
                 key={mode.key}
-                className={['mode-button', mode.key, this.props.selectedMode === mode.key].join(' ')}
+                className={['mode-button', mode.className, this.props.selectedMode === mode.key ? 'selected' : ''].join(' ')}
                 onClick={() => { this.props.onModeSelect(mode.key); }}
               >{mode.label}</button>
           ))
@@ -49,7 +49,7 @@ const mapStateToProps = function mapStateToProps(state) {
 
     modes: Object.keys(AVAILABILITY_TYPES).map(type => ({
       key: AVAILABILITY_TYPES[type].key,
-      label: AVAILABILITY_TYPES[type].symbol + ' ' + AVAILABILITY_TYPES[type].label,
+      label: AVAILABILITY_TYPES[type].symbol + ' ' + AVAILABILITY_TYPES[type].title,
       className: AVAILABILITY_TYPES[type].className,
     })),
     selectedMode: state.getIn(['updating', 'selectedAvailabiltyType']),
