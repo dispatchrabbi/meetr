@@ -24,8 +24,8 @@
     &.tier6 { background-color: $scale-single6-color; }
     &.tier7 { background-color: $scale-single7-color; }
 
-    &.busy     { background-color: $busy-color; }
-    &.ifneedbe { background-color: $ifneedbe-color; }
-    &.free     { background-color: $free-color}
+    &.busy     { background-color: $busy-color2; color: white; }
+    &.ifneedbe { background-color: $ifneedbe-color; color: white; }
+    &.free     { background-color: $free-color; color: white; }
   }
 }
