@@ -1,11 +1,14 @@
 import _ from 'lodash';
+
 import { connect } from 'react-redux';
-import ScheduleGrid from './schedule-grid';
+import ScheduleGrid from '../schedule-grid.js';
+
+// import AVAILABILITY_TYPES from '../../lib/availability-types.js';
 import {
   get15MinuteIncrements,
   showLabel,
   formatTime,
-} from '../lib/schedule-grid-helpers.js';
+} from '../../lib/schedule-grid-helpers.js';
 
 const tallyAvailabilities = function tallyAvailabilities(participants, day, time) {
   return _(participants).map('availabilities').reduce(function tally(tallies, availabilityArray) {
@@ -22,7 +25,7 @@ const tallyAvailabilities = function tallyAvailabilities(participants, day, time
 
 // TODO: Add timezone support
 const mapStateToProps = function mapStateToProps(state) {
-  const schedule = state.get('schedule').toJS();
+  const schedule = state.getIn(['currentSchedule', 'schedule', 'obj']).toJS();
 
   // TODO: Allow for definite schedules
   const days = schedule.days.map(day => { return { key: day.toLowerCase(), label: day, value: day.toLowerCase() }; });
@@ -35,7 +38,7 @@ const mapStateToProps = function mapStateToProps(state) {
   });
 
   const cellValue = function cellValueShowAllAvailability(rowValue, colValue) {
-    const tallies = tallyAvailabilities(state.get('participants').toJS(), colValue, rowValue);
+    const tallies = tallyAvailabilities(state.getIn(['currentSchedule', 'participants', 'list']).toJS(), colValue, rowValue);
 
     return [tallies.free, tallies.ifneedbe, tallies.busy].join(' / ');
   };
@@ -60,9 +63,7 @@ const mapDispatchToProps = function mapDispatchToProps(/* dispatch */) {
   };
 };
 
-const ShowAvailabilityGrid = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ScheduleGrid);
-
-export default ShowAvailabilityGrid;

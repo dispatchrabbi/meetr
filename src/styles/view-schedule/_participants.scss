@@ -1,0 +1,18 @@
+.participants {
+  @include span-columns(3);
+  @include omega();
+
+  // Needed so absolute-position the login form against this
+  position: relative;
+
+  & > header {
+    display: flex;
+    margin-bottom: $small-spacing;
+
+    h3 {
+      flex: 1;
+      padding: $small-spacing/2 0;
+      margin: 0;
+    }
+  }
+}

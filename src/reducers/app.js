@@ -1,48 +1,21 @@
-import {
-  routing,
-} from './routing.js';
+import { combineReducers } from 'redux-immutablejs';
 
-import {
-  isCreatingSchedule,
-  scheduleCreationError,
-  isLoadingSchedule,
-  scheduleLoadError,
-  schedule,
-} from './schedule.js';
+import { routing } from './routing.js';
 
-import {
-  isLoadingParticipants,
-  participantsLoadError,
-  participants,
-  isLoggingIn,
-  loginError,
-  currentUser,
-} from './participants.js';
+import { currentSchedule } from './current-schedule.js';
+import { currentUser } from './current-user.js';
+import { updating } from './updating.js';
 
-import {
-  isEditingSchedule,
-  availabilityMode,
-} from './editing.js';
+import { scheduleForm } from './schedule-form.js';
+import { loginForm } from './login-form.js';
 
-// TODO: rewrite the reducers to affect the state as a whole based on action, rather than each portion of the state
-// (or maybe split up the state into smaller portions, but don't do every property inidividually?)
-export default {
+export default combineReducers({
   routing,
 
-  schedule,
-  isCreatingSchedule,
-  scheduleCreationError,
-  isLoadingSchedule,
-  scheduleLoadError,
-
-  participants,
-  isLoadingParticipants,
-  participantsLoadError,
-
+  currentSchedule,
   currentUser,
-  isLoggingIn,
-  loginError,
+  updating,
 
-  isEditingSchedule,
-  availabilityMode,
-};
+  scheduleForm,
+  loginForm,
+});

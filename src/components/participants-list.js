@@ -3,11 +3,11 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 
 const ParticipantsList = React.createClass({
   propTypes: {
-    participants: ImmutablePropTypes.listOf(ImmutablePropTypes.map),
+    participants: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
     currentUser: PropTypes.string,
 
-    onParticipantVisibilityChange: PropTypes.func,
-    onParticipantImportanceChange: PropTypes.func,
+    onParticipantVisibilityChange: PropTypes.func.isRequired,
+    onParticipantImportanceChange: PropTypes.func.isRequired,
   },
 
   isUserParticipant: function isUserParticipant(participant) {
