@@ -8,7 +8,7 @@ import LoginForm from './login-form.js';
 import { setVisibility } from '../../actions/login-form.js';
 import { logOutUser } from '../../actions/participants.js';
 
-export const Participants = React.createClass({
+export const ParticipantsSection = React.createClass({
   propTypes: {
     showLoginForm: PropTypes.bool.isRequired,
     isUserLoggedIn: PropTypes.bool.isRequired,
@@ -62,4 +62,4 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Participants);
+)(ParticipantsSection);

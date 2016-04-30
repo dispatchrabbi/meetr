@@ -124,7 +124,7 @@ const ScheduleGrid = React.createClass({
         </thead>
         <tbody>
           {this.props.rows.map(row => {
-            return (<tr key={'row-' + row.key}>
+            return (<tr key={'row-' + row.key} className={row.className || ''}>
               <th key={'lheader-' + row.key}>{row.label}</th>
               {this.props.columns.map(column => {
                 const key = 'cell-' + column.key + '-' + row.key;

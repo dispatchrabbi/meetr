@@ -1,0 +1,11 @@
+.participants-list {
+  margin-bottom: $base-spacing;
+
+  li {
+    padding: $small-spacing;
+
+    &:nth-child(even) {
+      background-color: $secondary-background-color;
+    }
+  }
+}

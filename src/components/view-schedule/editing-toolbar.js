@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import AVAILABILITY_TYPES from '../../lib/availability-types.js';
 import {
-  setAvailability,
   setEditingSchedule,
+  selectAvailabilityType,
 } from '../../actions/editing.js';
 
 export const EditingToolbar = React.createClass({
@@ -24,20 +24,26 @@ export const EditingToolbar = React.createClass({
   render: function render() {
     return (
       <div className="editing-toolbar">
-        <button
-          onClick={() => { this.props.onEditSet(!this.props.isEditingSchedule); }}
-        >{ this.props.isEditingSchedule ? 'Done' : 'Edit' }</button>
-        <div className="mode-buttons">
-        {
-          this.props.modes.map(mode => (
-              <button
-                key={mode.key}
-                className={['mode-button', mode.key, this.props.selectedMode === mode.key].join(' ')}
-                onClick={() => { this.props.onModeSelect(mode.key); }}
-              >{mode.label}</button>
-          ))
-        }
+        <div className="edit-buttons">
+          <button
+            onClick={() => { this.props.onEditSet(!this.props.isEditingSchedule); }}
+          >{ this.props.isEditingSchedule ? 'Done' : 'Edit' }</button>
         </div>
+        {
+          this.props.isEditingSchedule ?
+          <div className="mode-buttons">
+          {
+            this.props.modes.map(mode => (
+                <button
+                  key={mode.key}
+                  className={['mode-button', mode.className, this.props.selectedMode === mode.key ? 'selected' : ''].join(' ')}
+                  onClick={() => { this.props.onModeSelect(mode.key); }}
+                >{mode.label}</button>
+            ))
+          }
+          </div> :
+          ''
+        }
       </div>
     );
   },
@@ -49,7 +55,7 @@ const mapStateToProps = function mapStateToProps(state) {
 
     modes: Object.keys(AVAILABILITY_TYPES).map(type => ({
       key: AVAILABILITY_TYPES[type].key,
-      label: AVAILABILITY_TYPES[type].symbol + ' ' + AVAILABILITY_TYPES[type].label,
+      label: AVAILABILITY_TYPES[type].symbol + ' ' + AVAILABILITY_TYPES[type].title,
       className: AVAILABILITY_TYPES[type].className,
     })),
     selectedMode: state.getIn(['updating', 'selectedAvailabiltyType']),
@@ -62,7 +68,7 @@ const mapDispatchToProps = function mapDispatchToProps(dispatch) {
       dispatch(setEditingSchedule(isEditing));
     },
     onModeSelect: function onModeSelectChangeMode(selectedMode) {
-      dispatch(setAvailability(selectedMode));
+      dispatch(selectAvailabilityType(selectedMode));
     },
   };
 };

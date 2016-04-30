@@ -3,10 +3,11 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import ScheduleGrid from '../schedule-grid.js';
 
-// import AVAILABILITY_TYPES from '../../lib/availability-types.js';
+import AVAILABILITY_TYPES from '../../lib/availability-types.js';
 import {
   get15MinuteIncrements,
   showLabel,
+  whichMinute,
   formatTime,
 } from '../../lib/schedule-grid-helpers.js';
 
@@ -33,6 +34,7 @@ const mapStateToProps = function mapStateToProps(state) {
     return {
       key: 't' + time,
       label: showLabel(time, ix === 0) ? formatTime(time) : '',
+      className: 'm' + whichMinute(time),
       value: time,
     };
   });
@@ -40,12 +42,30 @@ const mapStateToProps = function mapStateToProps(state) {
   const cellValue = function cellValueShowAllAvailability(rowValue, colValue) {
     const tallies = tallyAvailabilities(state.getIn(['currentSchedule', 'participants', 'list']).toJS(), colValue, rowValue);
 
-    return [tallies.free, tallies.ifneedbe, tallies.busy].join(' / ');
+    return [
+      `${tallies.free} ${AVAILABILITY_TYPES.free.symbol}`,
+      `${tallies.ifneedbe} ${AVAILABILITY_TYPES.ifneedbe.symbol}`,
+      `${tallies.busy} ${AVAILABILITY_TYPES.busy.symbol}`,
+    ].join(' / ');
   };
 
-  const cellClassName = function cellClassByMassAvailability() {
-    // TODO: Do funky colors
-    return '';
+  const cellClassName = function cellClassByMassAvailability(rowValue, colValue) {
+    // FIXME: This algorithm could be a lot better.
+    const tallies = tallyAvailabilities(state.getIn(['currentSchedule', 'participants', 'list']).toJS(), colValue, rowValue);
+    const numberOfParticipants = state.getIn(['currentSchedule', 'participants', 'list']).size;
+
+    let className = 'totally-busy';
+    if (tallies.free === numberOfParticipants) {
+      className = 'best-choice';
+    } else if (tallies.busy === numberOfParticipants) {
+      className = 'totally-busy';
+    } else {
+      const percentageOkay = (tallies.free + (tallies.ifneedbe * 0.5)) / numberOfParticipants;
+      // 5 tiers, numbered 0-4. Figure out which 20% the percentage is in.
+      className = 'tier' + Math.floor(percentageOkay / 0.2);
+    }
+
+    return className;
   };
 
   return {

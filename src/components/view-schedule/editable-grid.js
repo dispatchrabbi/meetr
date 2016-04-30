@@ -6,6 +6,7 @@ import AVAILABILITY_TYPES from '../../lib/availability-types.js';
 import {
   get15MinuteIncrements,
   showLabel,
+  whichMinute,
   formatTime,
 } from '../../lib/schedule-grid-helpers';
 
@@ -25,11 +26,12 @@ const mapStateToProps = function mapStateToProps(state) {
     return {
       key: 't' + time,
       label: showLabel(time, ix === 0) ? formatTime(time) : '',
+      className: 'm' + whichMinute(time),
       value: time,
     };
   });
 
-  const currentUserId = state.getIn(['currentUser', 'id']);
+  const currentUserId = state.get('currentUser');
   const userParticipant = state.getIn(['currentSchedule', 'participants', 'list']).find(participant => participant.get('_id') === currentUserId);
   const selectedAvailabiltyType = state.getIn(['updating', 'selectedAvailabiltyType']);
 
@@ -50,7 +52,7 @@ const mapStateToProps = function mapStateToProps(state) {
   if (userParticipant) {
     cellClassName = function cellClassNameUser(rowValue, colValue, intersects) {
       if (intersects) {
-        return AVAILABILITY_TYPES[selectedAvailabiltyType].className;
+        return AVAILABILITY_TYPES[selectedAvailabiltyType].className + ' selecting';
       }
 
       const availability = findAvailability(userParticipant.get('availabilities'), colValue, rowValue);
