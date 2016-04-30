@@ -5,24 +5,57 @@
     padding: $small-spacing;
   }
 
+  thead th {
+    text-align: center;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-left-color: transparent;
+  }
+
   thead th:first-child {
     width: 4em;
   }
 
-  tr :first-child {
+  tbody tr th {
     text-align: right;
+    border-left-color: transparent;
+  }
+
+  tbody tr.m0 th {
+    border-bottom-color: transparent;
+  }
+
+  tbody tr:not(.m0):not(.m45) th {
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  tbody tr.m45 th {
+    border-top-color: transparent;
+  }
+
+  tbody tr.m45:last-child th {
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  th {
+    font-weight: normal;
+    color: $medium-gray;
   }
 
   td {
     text-align: center;
 
-    &.tier1 { background-color: $scale-single1-color; }
-    &.tier2 { background-color: $scale-single2-color; }
-    &.tier3 { background-color: $scale-single3-color; }
-    &.tier4 { background-color: $scale-single4-color; }
-    &.tier5 { background-color: $scale-single5-color; }
-    &.tier6 { background-color: $scale-single6-color; }
-    &.tier7 { background-color: $scale-single7-color; }
+    &.totally-busy { background-color: $scale-single0-color; }
+
+    &.tier0 { background-color: $scale-single1-color; }
+    &.tier1 { background-color: $scale-single2-color; }
+    &.tier2 { background-color: $scale-single3-color; color: white; }
+    &.tier3 { background-color: $scale-single4-color; color: white; }
+    &.tier4 { background-color: $scale-single5-color; color: white; }
+
+    &.best-choice { background-color: $scale-single7-color; color: white; }
 
     &.busy     { background-color: $busy-color2; color: white; }
     &.ifneedbe { background-color: $ifneedbe-color; color: white; }

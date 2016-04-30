@@ -30,6 +30,10 @@ export const showLabel = function showLabel(time, isFirst) {
   return isFirst || !(time % 3600); // show a label for the first one and if the time is an hour
 };
 
+export const whichMinute = function whichMinute(time) {
+  return Math.floor((time % 3600) / 60);
+};
+
 export const formatTime = function formatTime(time) {
   return moment().startOf('day').add(time, 'seconds').format('H:mm');
 };

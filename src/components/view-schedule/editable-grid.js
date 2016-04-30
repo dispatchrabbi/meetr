@@ -6,6 +6,7 @@ import AVAILABILITY_TYPES from '../../lib/availability-types.js';
 import {
   get15MinuteIncrements,
   showLabel,
+  whichMinute,
   formatTime,
 } from '../../lib/schedule-grid-helpers';
 
@@ -25,6 +26,7 @@ const mapStateToProps = function mapStateToProps(state) {
     return {
       key: 't' + time,
       label: showLabel(time, ix === 0) ? formatTime(time) : '',
+      className: 'm' + whichMinute(time),
       value: time,
     };
   });
