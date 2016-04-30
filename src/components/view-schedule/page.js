@@ -3,7 +3,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import GridSection from './grid-section.js';
-import Participants from './participants.js';
+import ParticipantsSection from './participants-section.js';
 
 import { loadSchedule } from '../../actions/schedule.js';
 import { loadParticipants } from '../../actions/participants.js';
@@ -28,7 +28,7 @@ export const Page = React.createClass({
       <section className="page">
         <h2>{this.props.schedule.get('title')}</h2>
         <GridSection />
-        <Participants />
+        <ParticipantsSection />
       </section>
     ) : (
       <section className="page">
