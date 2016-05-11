@@ -1,5 +1,5 @@
 # Meetr
-It helps you figure out when everyone's free, but in a cool way. You can tell because there's no *e* before the *r*.
+It helps you figure out when everyone's free, but in a cool way. You can tell it's cool because there's no *e* before the *r*.
 
 ## Installing
 Meetr relies on Docker to get it Node and MongoDB, so as long as you're rocking that Docker setup, all you have to do is:
@@ -7,11 +7,13 @@ Meetr relies on Docker to get it Node and MongoDB, so as long as you're rocking 
 ```
 $ git clone dispatchrabbi/meetr
 $ cd meetr
-$ docker-compose build
+$ env FORCE_SASS_BUILD=\"true\" docker-compose build
 $ docker-compose up -d
 ```
 
-> You may, occasionally, find that during the `docker-compose up -d` command, the container won't come up and will complain that it can't find the bindings for libsass. This is because libsass gets confused by Docker's union filesystem and can't figure out where its bindings are, even though they're *right there, goshdarnit*. You can fix this by adding `"predev": "env FORCE_SASS_BUILD=\"true\" npm rebuid node-sass"` to the package.json and running `docker-compose up` once, then hitting Ctrl+C to quit and removing the line. This forces the bindings to be built on the same layer as the app. You should be fine after. I recognize that this is super-duper wonky, and hopefully I can find a way in the future to mitigate this or do it automatically. ([Issue #9](https://github.com/dispatchrabbi/meetr/issues/9) is related to this.)
+> I'm using the Docker native setup on OS X, which is all that this is tested on so far. Hope it works in other places too!
+
+The `FORCE_SASS_BUILD` environment variable is only there to force node-sass to build/download bindings from inside the container. It's funky and I'm not a huge fan, but it works for now.
 
 If you've got something else going on and you're gonna put your own MongoDB setup together, the environment variables you're looking for are in `config.js`. It *should* all work, but if it doesn't, feel free to make an issue.
 
