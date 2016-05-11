@@ -2,9 +2,10 @@
 meetr:
   build: .
   ports:
-    - "8080:8080"
+    - 8080:8080
   volumes:
-    - ".:/srv/meetr"
+    - .:/srv/meetr
+    - /srv/meetr/node_modules
   links:
     - mongo
 
